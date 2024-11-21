@@ -10,13 +10,14 @@
     <LinearLayout
         android:layout_width="415dp"
         android:layout_height="119dp"
-        android:layout_marginTop="620dp"
         android:background="@drawable/background_blue"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <Button
             android:id="@+id/catHistory"
@@ -62,7 +63,7 @@
             android:text="HOME"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            app:srcCompat="@drawable/home_button_for_interface_svgrepo_com"/>
+            app:srcCompat="@drawable/home_button_for_interface_svgrepo_com" />
 
         <Button
             android:id="@+id/catSettings"
