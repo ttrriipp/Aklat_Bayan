@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent myIntent = new Intent(MainActivity.this, SignUpPage.class);
                 startActivity(myIntent);
             }
+            wew
         });
 
     }
