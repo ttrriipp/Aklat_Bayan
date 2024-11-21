@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings">
+
+    <LinearLayout
+        android:layout_width="415dp"
+        android:layout_height="119dp"
+        android:layout_marginTop="620dp"
+        android:background="@drawable/background_blue"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/settHistory"
+            style="@android:style/Widget.Button"
+            android:layout_width="160dp"
+            android:layout_height="67dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableTop="@drawable/history_svgrepo_com"
+            android:fontFamily="@font/alegreya_sc"
+            android:text="HISTORY"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:srcCompat="@drawable/history_svgrepo_com" />
+
+        <Button
+            android:id="@+id/settBookmark"
+            style="@android:style/Widget.Button"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableTop="@drawable/bookmark_circle_svgrepo_com"
+            android:fontFamily="@font/alegreya_sc"
+            android:text="CATALOG"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:srcCompat="@drawable/bookmark_circle_svgrepo_com" />
+
+        <Button
+            android:id="@+id/settHome"
+            android:layout_width="85dp"
+            android:layout_height="82dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableTop="@drawable/home_button_for_interface_svgrepo_com"
+            android:fontFamily="@font/alegreya_sc"
+            android:text="HOME"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:srcCompat="@drawable/home_button_for_interface_svgrepo_com" />
+
+        <Button
+            android:id="@+id/settSettings"
+            style="@android:style/Widget.Button"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableTop="@drawable/settings_svgrepo_com"
+            android:fontFamily="@font/alegreya_sc"
+            android:text="SETTINGS"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:srcCompat="@drawable/settings_svgrepo_com" />
+
+        <Button
+            android:id="@+id/settUser"
+            style="@android:style/Widget.Button"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableTop="@drawable/user_svgrepo_com"
+            android:fontFamily="@font/alegreya_sc"
+            android:text="USER"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:srcCompat="@drawable/user_svgrepo_com" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This is My Settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
