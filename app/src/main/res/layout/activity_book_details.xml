@@ -37,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -163,8 +163,10 @@
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:background="?attr/selectableItemBackground"
         android:drawableStart="@drawable/back_svgrepo_com"
-        tools:layout_editor_absoluteX="15dp"
-        tools:layout_editor_absoluteY="12dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
