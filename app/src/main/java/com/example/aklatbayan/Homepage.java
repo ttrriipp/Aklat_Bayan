@@ -2,6 +2,8 @@ package com.example.aklatbayan;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -45,6 +47,23 @@ public class Homepage extends AppCompatActivity {
 
         LoadData();
 
+        binding.txtSearchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filterList(s.toString());
+            }
+        });
+
         history = findViewById(R.id.imgHistory);
         bookmark = findViewById(R.id.imgBookmark);
         home = findViewById(R.id.imgHome);
@@ -87,6 +106,24 @@ public class Homepage extends AppCompatActivity {
             }
         });
     }
+
+    private void filterList(String text) {
+        java.util.List<Model> filteredList = new ArrayList<>();
+        for (Model item : titleList) {
+
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            binding.data.setVisibility(View.VISIBLE);
+        } else {
+            adapter.setFilteredList(filteredList);
+            binding.data.setVisibility(View.GONE);
+        }
+    }
+
     private void LoadData() {
         titleList.clear();
         firestore.collection("Books").orderBy("id", Query.Direction.ASCENDING)

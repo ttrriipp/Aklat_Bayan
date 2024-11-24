@@ -25,6 +25,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.titleList = titleList;
     }
 
+    public void setFilteredList(java.util.List<Model> filteredList) {
+
+        this.titleList = (ArrayList<Model>) filteredList;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
