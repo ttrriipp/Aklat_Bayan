@@ -38,8 +38,6 @@ public class book_details extends AppCompatActivity {
         String category = getIntent().getStringExtra("category");
         String downloadUrl = getIntent().getStringExtra("downloadUrl");
 
-        Glide.with(this).load(thumbnail).into(binding.thumbnail);
-
         String title = getIntent().getStringExtra("title");
 
         binding.txtTitle.setText(title);
