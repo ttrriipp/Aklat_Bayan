@@ -39,6 +39,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         Model model = titleList.get(position);
         holder.title.setText(model.getTitle());
+        holder.desc.setText(model.getDesc());
+        holder.category.setText(model.getCategory());
 
         holder.itemView.setOnClickListener(v -> {
 
@@ -62,11 +64,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title;
+        TextView title, desc, category;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.txtTitle);
+            desc = itemView.findViewById(R.id.txtDesc);
+            category = itemView.findViewById(R.id.txtCategory);
         }
     }
 }
