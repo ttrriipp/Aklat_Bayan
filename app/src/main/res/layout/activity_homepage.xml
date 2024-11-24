@@ -8,24 +8,22 @@
     tools:context=".Homepage">
 
     <LinearLayout
-        android:layout_width="415dp"
-        android:layout_height="119dp"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
         android:background="@drawable/background_blue"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/imgHistory"
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
-            android:layout_height="67dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:drawableTop="@drawable/history_svgrepo_com"
@@ -40,8 +38,7 @@
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:drawableTop="@drawable/bookmark_circle_svgrepo_com"
@@ -53,10 +50,10 @@
 
         <Button
             android:id="@+id/imgHome"
-            android:layout_width="85dp"
-            android:layout_height="82dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:drawableTop="@drawable/home_button_for_interface_svgrepo_com"
             android:fontFamily="@font/alegreya_sc"
@@ -70,8 +67,7 @@
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:drawableTop="@drawable/settings_svgrepo_com"
@@ -86,8 +82,7 @@
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:drawableTop="@drawable/user_svgrepo_com"
@@ -102,16 +97,16 @@
     <TextView
         android:id="@+id/txtSearchBar"
         android:layout_width="337dp"
-        android:layout_height="44dp"
+        android:layout_height="48dp"
         android:background="@drawable/search"
         android:drawableStart="@drawable/search_svg"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:hint="Search For Your E-Book"
+        android:inputType="text"
         android:paddingStart="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,33 +114,25 @@
         app:layout_constraintVertical_bias="0.036" />
 
     <androidx.cardview.widget.CardView
-        android:layout_width="392dp"
-        android:layout_height="504dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.328">
+        app:layout_constraintTop_toBottomOf="@+id/txtSearchBar">
 
-        <RelativeLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/books"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/activity_homepage_admin">
+        </androidx.recyclerview.widget.RecyclerView>
 
-            </androidx.recyclerview.widget.RecyclerView>
-        </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
 
