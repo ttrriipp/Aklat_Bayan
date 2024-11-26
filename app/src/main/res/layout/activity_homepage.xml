@@ -63,16 +63,17 @@
             app:srcCompat="@drawable/home_button_for_interface_svgrepo_com" />
 
         <Button
-            android:id="@+id/imgSettings"
+            android:id="@+id/imgDownloads"
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:drawableTop="@drawable/settings_svgrepo_com"
+            android:drawableTop="@drawable/download_svgrepo_com"
             android:fontFamily="@font/alegreya_sc"
-            android:text="SETTINGS"
+            android:text="DOWNLOAD"
+            android:textSize="13sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             app:srcCompat="@drawable/settings_svgrepo_com" />

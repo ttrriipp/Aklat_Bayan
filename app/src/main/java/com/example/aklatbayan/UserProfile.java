@@ -27,7 +27,7 @@ public class UserProfile extends AppCompatActivity {
         history = findViewById(R.id.userHistory);
         bookmark = findViewById(R.id.userBookmark);
         home = findViewById(R.id.userHome);
-        settings =  findViewById(R.id.userSettings);
+        settings =  findViewById(R.id.userDownloads);
         user = findViewById(R.id.userUser);
 
         history.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +54,7 @@ public class UserProfile extends AppCompatActivity {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(UserProfile.this, Settings.class);
+                Intent my = new Intent(UserProfile.this, activity_download.class);
                 startActivity(my);
             }
         });

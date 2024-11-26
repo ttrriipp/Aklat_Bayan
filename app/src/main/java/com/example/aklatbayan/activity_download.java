@@ -11,57 +11,57 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class Settings extends AppCompatActivity {
+public class activity_download extends AppCompatActivity {
     Button history, bookmark, home, settings, user;
-    public static final int styleAttributeXxx=0x7f04015a;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_download);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        history = findViewById(R.id.settHistory);
-        bookmark = findViewById(R.id.settBookmark);
-        home = findViewById(R.id.settHome);
-        settings =  findViewById(R.id.settSettings);
-        user = findViewById(R.id.settUser);
+
+        history = findViewById(R.id.dwlHistory);
+        bookmark = findViewById(R.id.dwlBookmark);
+        home = findViewById(R.id.dwlHome);
+        settings =  findViewById(R.id.dwlDownloads);
+        user = findViewById(R.id.dwlUser);
 
         history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(Settings.this, History.class);
+                Intent my = new Intent(activity_download.this, History.class);
                 startActivity(my);
             }
         });
         bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(Settings.this, Catalog.class);
+                Intent my = new Intent(activity_download.this, Catalog.class);
                 startActivity(my);
             }
         });
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(Settings.this, Homepage.class);
+                Intent my = new Intent(activity_download.this, Homepage.class);
                 startActivity(my);
             }
         });
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(Settings.this, Settings.class);
+                Intent my = new Intent(activity_download.this, activity_download.class);
                 startActivity(my);
             }
         });
         user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(Settings.this, UserProfile.class);
+                Intent my = new Intent(activity_download.this, UserProfile.class);
                 startActivity(my);
             }
         });

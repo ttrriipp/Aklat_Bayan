@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Settings">
+    tools:context=".activity_download">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/settHistory"
+            android:id="@+id/dwlHistory"
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             app:srcCompat="@drawable/history_svgrepo_com" />
 
         <Button
-            android:id="@+id/settBookmark"
+            android:id="@+id/dwlBookmark"
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             app:srcCompat="@drawable/bookmark_circle_svgrepo_com" />
 
         <Button
-            android:id="@+id/settHome"
+            android:id="@+id/dwlHome"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -62,22 +62,23 @@
             app:srcCompat="@drawable/home_button_for_interface_svgrepo_com" />
 
         <Button
-            android:id="@+id/settSettings"
+            android:id="@+id/dwlDownloads"
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:drawableTop="@drawable/settings_svgrepo_com"
+            android:drawableTop="@drawable/download_svgrepo_com"
             android:fontFamily="@font/alegreya_sc"
-            android:text="SETTINGS"
+            android:text="DOWNLOAD"
+            android:textSize="13sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             app:srcCompat="@drawable/settings_svgrepo_com" />
 
         <Button
-            android:id="@+id/settUser"
+            android:id="@+id/dwlUser"
             style="@android:style/Widget.Button"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
@@ -97,7 +98,7 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This is My Settings"
+        android:text="This is My Downloads"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

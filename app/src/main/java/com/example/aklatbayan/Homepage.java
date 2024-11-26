@@ -67,7 +67,7 @@ public class Homepage extends AppCompatActivity {
         history = findViewById(R.id.imgHistory);
         bookmark = findViewById(R.id.imgBookmark);
         home = findViewById(R.id.imgHome);
-        settings =  findViewById(R.id.imgSettings);
+        settings =  findViewById(R.id.imgDownloads);
         user = findViewById(R.id.imgUser);
 
         history.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +94,7 @@ public class Homepage extends AppCompatActivity {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent my = new Intent(Homepage.this, Settings.class);
+                Intent my = new Intent(Homepage.this, activity_download.class);
                 startActivity(my);
             }
         });

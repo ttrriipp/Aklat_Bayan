@@ -13,6 +13,9 @@
         android:theme="@style/Theme.AklatBayan"
         tools:targetApi="31">
         <activity
+            android:name=".activity_download"
+            android:exported="false" />
+        <activity
             android:name=".BookPDF"
             android:exported="false" />
         <activity
