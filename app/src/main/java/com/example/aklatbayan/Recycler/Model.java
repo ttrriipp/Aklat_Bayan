@@ -45,7 +45,7 @@ public class Model {
         return desc;
     }
 
-    public void getDesc(String desc) {
+    public void setDesc(String desc) {
         this.desc = desc;
     }
 

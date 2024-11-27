@@ -16,6 +16,7 @@ import com.example.aklatbayan.R;
 import com.example.aklatbayan.book_details;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
@@ -27,7 +28,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.titleList = titleList;
     }
 
-    public void setFilteredList(java.util.List<Model> filteredList) {
+    public void setFilteredList(List<Model> filteredList) {
 
         this.titleList = (ArrayList<Model>) filteredList;
         notifyDataSetChanged();
