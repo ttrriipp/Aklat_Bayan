@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.aklatbayan.R;
 import com.example.aklatbayan.book_details;
 
@@ -48,6 +50,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.desc.setText(model.getDesc());
         holder.category.setText(model.getCategory());
 
+        Glide.with(context)
+                .load(model.getThumbnailUrl())
+                .placeholder(R.drawable.no_cover_available)
+                .error(R.drawable.no_cover_available)
+                .into(holder.homeThumbnail);
+
         holder.itemView.setOnClickListener(v -> {
 
             Intent intent = new Intent(context, book_details.class);
@@ -57,6 +65,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             intent.putExtra("category",model.getCategory());
             intent.putExtra("pdfLink",model.getPdfLink());
             intent.putExtra("downloadUrl",model.getDownloadUrl());
+            intent.putExtra("thumbnailUrl", model.getThumbnailUrl());
 
             context.startActivity(intent);
 
@@ -71,12 +80,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView title, desc, category;
+        ImageView homeThumbnail;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.txtTitle);
             desc = itemView.findViewById(R.id.txtDesc);
             category = itemView.findViewById(R.id.txtCategory);
+            homeThumbnail = itemView.findViewById(R.id.homeThumbnail);
         }
     }
 }
