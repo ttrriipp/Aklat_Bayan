@@ -1,12 +1,12 @@
 package com.example.aklatbayan.Recycler;
 
 public class Model {
-    String id, title, author, desc, category, pdfLink, downloadUrl;
+    String id, title, author, desc, category, pdfLink, downloadUrl, thumbnailUrl;
 
     public Model() {
     }
 
-    public Model(String id, String title, String author, String desc, String category, String pdfLink, String downloadUrl) {
+    public Model(String id, String title, String author, String desc, String category, String pdfLink, String downloadUrl, String thumbnailUrl) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -14,6 +14,7 @@ public class Model {
         this.category = category;
         this.pdfLink = pdfLink;
         this.downloadUrl = downloadUrl;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getId() {
@@ -70,5 +71,13 @@ public class Model {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 }
