@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aklatbayan.R;
-import com.example.aklatbayan.book_details;
+import com.example.aklatbayan.BookDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.new_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.book_entry, parent, false);
 
         return new ViewHolder(view);
     }
@@ -59,7 +59,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         holder.itemView.setOnClickListener(v -> {
 
-            Intent intent = new Intent(context, book_details.class);
+            Intent intent = new Intent(context, BookDetails.class);
             intent.putExtra("txtTitle",model.getTitle());
             intent.putExtra("author",model.getAuthor());
             intent.putExtra("desc",model.getDesc());

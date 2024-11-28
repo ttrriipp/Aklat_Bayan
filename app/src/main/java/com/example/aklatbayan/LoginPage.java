@@ -30,7 +30,7 @@ public class LoginPage extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIt = new Intent(LoginPage.this, Homepage.class);
+                Intent myIt = new Intent(LoginPage.this, MainScreen.class);
                 startActivity(myIt);
             }
         });
