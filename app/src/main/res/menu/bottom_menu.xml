@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="History"
+        android:id="@+id/history"
+        android:icon="@drawable/history_svgrepo_com"/>
+    <item android:title="Catalog"
+        android:id="@+id/catalog"
+        android:icon="@drawable/bookmark_circle_svgrepo_com"/>
+    <item android:title="Home"
+        android:id="@+id/home"
+        android:icon="@drawable/home_button_for_interface_svgrepo_com"/>
+    <item android:title="Download"
+        android:id="@+id/download"
+        android:icon="@drawable/download_svgrepo_com"/>
+    <item android:title="User"
+        android:icon="@drawable/user_svgrepo_com"
+        android:id="@+id/user"/>
+</menu>
