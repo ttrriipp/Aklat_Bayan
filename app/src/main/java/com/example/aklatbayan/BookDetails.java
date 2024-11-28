@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide;
 import com.example.aklatbayan.databinding.ActivityBookDetailsBinding;
 
 public class BookDetails extends AppCompatActivity {
-    ImageButton btnBack, btnDownload, btnCancel;
+    ImageButton btnBack, btnDownload;
     ToggleButton btnFave;
-    Button btnRead;
+    Button btnRead, btnCancel;
     ActivityBookDetailsBinding binding;
     Dialog dialog;
 
@@ -43,6 +43,7 @@ public class BookDetails extends AppCompatActivity {
         btnRead = findViewById(R.id.btnRead);
         btnBack = findViewById(R.id.btnBack);
         btnFave = findViewById(R.id.tglOFF);
+        btnDownload = findViewById(R.id.btnDownload);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +78,7 @@ public class BookDetails extends AppCompatActivity {
             dialog = new Dialog(this, R.style.Dialog_style);
             dialog.setContentView(R.layout.activity_downloads);
             dialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
+            btnCancel = dialog.findViewById(R.id.btnCancel);
             dialog.show();
 
             btnCancel.setOnClickListener(new View.OnClickListener() {

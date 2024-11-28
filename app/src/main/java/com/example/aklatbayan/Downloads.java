@@ -1,6 +1,8 @@
 package com.example.aklatbayan;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +22,14 @@ public class Downloads extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Button btnDownloadFull = findViewById(R.id.btnDownloadFull);
+        btnDownloadFull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Action to handle the download
+            }
+        });
+
     }
 }
