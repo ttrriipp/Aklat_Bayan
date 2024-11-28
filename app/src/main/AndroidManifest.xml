@@ -13,6 +13,9 @@
         android:theme="@style/Theme.AklatBayan"
         tools:targetApi="31">
         <activity
+            android:name=".BookPdf"
+            android:exported="false" />
+        <activity
             android:name=".MainScreen"
             android:exported="false" />
         <activity

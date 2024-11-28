@@ -1,5 +1,6 @@
 package com.example.aklatbayan;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import com.example.aklatbayan.databinding.ActivityBookDetailsBinding;
 public class BookDetails extends AppCompatActivity {
     ImageButton btnBack;
     ToggleButton btnFave;
+    Button btnRead;
     ActivityBookDetailsBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class BookDetails extends AppCompatActivity {
         binding.txtCategory.setText(category);
         binding.txtDescription.setText(description);
 
+
+        btnRead = findViewById(R.id.btnRead);
         btnBack = findViewById(R.id.btnBack);
         btnFave = findViewById(R.id.tglOFF);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +50,15 @@ public class BookDetails extends AppCompatActivity {
         btnFave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+            }
+        });
+        btnRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BookDetails.this, BookPdf.class);
+                intent.putExtra("pdfLink", pdfLink);
+                startActivity(intent);
 
             }
         });
