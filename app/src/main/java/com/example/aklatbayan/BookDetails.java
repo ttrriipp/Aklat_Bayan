@@ -42,7 +42,7 @@ public class BookDetails extends AppCompatActivity {
 
         btnRead = findViewById(R.id.btnRead);
         btnBack = findViewById(R.id.btnBack);
-        btnFave = findViewById(R.id.tglOFF);
+        btnFave = findViewById(R.id.btnFave);
         btnDownload = findViewById(R.id.btnDownload);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
