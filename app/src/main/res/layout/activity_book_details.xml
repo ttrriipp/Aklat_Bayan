@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/detailsTop"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="64dp"
         android:background="@drawable/top_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,11 +21,11 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
             android:padding="10dp"
-            android:src="@drawable/back_svgrepo_com"
-            android:contentDescription="@string/back"/>
+            android:src="@drawable/back_svgrepo_com" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -51,12 +51,12 @@
                 android:layout_height="48dp"
                 android:layout_marginEnd="16dp"
                 android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/download"
                 android:padding="10dp"
                 android:src="@drawable/baseline_download_48"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/tglOFF"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/download"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -105,7 +105,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
-            android:id="@+id/progressBar3"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -124,7 +123,7 @@
             android:layout_marginTop="24dp"
             android:text="Description"
             android:textColor="@color/black"
-            android:textSize="32sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detailThumbnail" />
@@ -135,7 +134,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="64dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +149,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse efficitur sollicitudin elit, eu suscipit nisl imperdiet sit amet. Duis vitae luctus lorem, et eleifend est. "
                     android:textSize="20sp" />
@@ -162,7 +159,6 @@
             android:id="@+id/tableLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/txtTitle"
