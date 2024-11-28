@@ -1,5 +1,6 @@
 package com.example.aklatbayan;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,16 +14,17 @@ import com.bumptech.glide.Glide;
 import com.example.aklatbayan.databinding.ActivityBookDetailsBinding;
 
 public class BookDetails extends AppCompatActivity {
-    ImageButton btnBack;
+    ImageButton btnBack, btnDownload, btnCancel;
     ToggleButton btnFave;
     Button btnRead;
     ActivityBookDetailsBinding binding;
+    Dialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBookDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
         String description = getIntent().getStringExtra("desc");
         String category = getIntent().getStringExtra("category");
@@ -44,13 +46,20 @@ public class BookDetails extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            onBackPressed();
+                onBackPressed();
             }
         });
         btnFave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        btnDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
             }
         });
         btnRead.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +71,20 @@ public class BookDetails extends AppCompatActivity {
 
             }
         });
-
     }
-}
+
+        private void showDialog() {
+            dialog = new Dialog(this, R.style.Dialog_style);
+            dialog.setContentView(R.layout.activity_downloads);
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
+            dialog.show();
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        }
+    }
