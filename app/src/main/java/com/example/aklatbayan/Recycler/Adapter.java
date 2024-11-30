@@ -67,6 +67,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             intent.putExtra("pdfLink",model.getPdfLink());
             intent.putExtra("downloadUrl",model.getDownloadUrl());
             intent.putExtra("thumbnailUrl", model.getThumbnailUrl());
+            intent.putExtra("id", model.getId());
 
             context.startActivity(intent);
 
