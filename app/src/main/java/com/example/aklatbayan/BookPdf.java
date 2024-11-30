@@ -8,10 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aklatbayan.databinding.ActivityBookPdfBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,6 +25,10 @@ import okhttp3.Response;
 public class BookPdf extends AppCompatActivity {
 
     ActivityBookPdfBinding binding;
+    private FirebaseFirestore firestore;
+    private String bookId;
+    private int totalPages = 0;
+    private int currentPage = 0;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +36,19 @@ public class BookPdf extends AppCompatActivity {
         binding = ActivityBookPdfBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        firestore = FirebaseFirestore.getInstance();
         String pdfLink = getIntent().getStringExtra("pdfLink");
-        String bookId = getIntent().getStringExtra("id");
+        bookId = getIntent().getStringExtra("id");
 
         if (bookId != null) {
+            loadReadingProgress();
             File bookFile = new File(getFilesDir() + "/books/" + bookId + ".pdf");
             if (bookFile.exists()) {
-                // Load offline
                 loadOfflinePdf(bookFile);
                 return;
             }
         }
 
-        // If no offline file exists or no bookId, load online
         if (pdfLink != null && !pdfLink.isEmpty()) {
             loadOnlinePdf(pdfLink);
         } else {
@@ -50,9 +57,42 @@ public class BookPdf extends AppCompatActivity {
         }
     }
 
+    private void loadReadingProgress() {
+        firestore.collection("reading_progress")
+                .document(bookId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        currentPage = documentSnapshot.getLong("currentPage").intValue();
+                    }
+                });
+    }
+
+    private void saveReadingProgress() {
+        if (bookId != null && totalPages > 0) {
+            Map<String, Object> progress = new HashMap<>();
+            progress.put("currentPage", currentPage);
+            progress.put("totalPages", totalPages);
+            progress.put("progress", (float) currentPage / totalPages * 100);
+
+            firestore.collection("reading_progress")
+                    .document(bookId)
+                    .set(progress)
+                    .addOnFailureListener(e -> 
+                        Toast.makeText(this, "Failed to save progress", Toast.LENGTH_SHORT).show());
+        }
+    }
+
     private void loadOfflinePdf(File pdfFile) {
         binding.pdfView.fromFile(pdfFile)
+                .defaultPage(currentPage)
+                .onPageChange((page, pageCount) -> {
+                    currentPage = page;
+                    totalPages = pageCount;
+                    saveReadingProgress();
+                })
                 .onLoad(nbPages -> {
+                    totalPages = nbPages;
                     binding.progressBar.setVisibility(View.GONE);
                 })
                 .onError(throwable -> {
@@ -96,7 +136,14 @@ public class BookPdf extends AppCompatActivity {
                 InputStream inputStream = response.body().byteStream();
                 runOnUiThread(() -> {
                     binding.pdfView.fromStream(inputStream)
+                            .defaultPage(currentPage)
+                            .onPageChange((page, pageCount) -> {
+                                currentPage = page;
+                                totalPages = pageCount;
+                                saveReadingProgress();
+                            })
                             .onLoad(nbPages -> {
+                                totalPages = nbPages;
                                 binding.progressBar.setVisibility(View.GONE);
                             })
                             .onError(throwable -> {
@@ -109,5 +156,11 @@ public class BookPdf extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveReadingProgress();
     }
 }

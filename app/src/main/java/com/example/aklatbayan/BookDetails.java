@@ -39,6 +39,7 @@ public class BookDetails extends AppCompatActivity {
     private ProgressBar downloadProgress;
     private String downloadUrl;
     private String pdfLink;
+    private ProgressBar bookReadingProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,6 @@ public class BookDetails extends AppCompatActivity {
         binding.txtTitle.setText(title);
         binding.txtCategory.setText(category);
         binding.txtDescription.setText(description);
-
 
         btnRead = findViewById(R.id.btnRead);
         btnBack = findViewById(R.id.btnBack);
@@ -101,6 +101,14 @@ public class BookDetails extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         downloadUrl = getIntent().getStringExtra("downloadUrl");
         pdfLink = getIntent().getStringExtra("pdfLink");
+
+        bookReadingProgress = findViewById(R.id.bookReadingProgress);
+        String bookId = getIntent().getStringExtra("id");
+        
+        // Load reading progress
+        if (bookId != null) {
+            loadReadingProgress(bookId);
+        }
     }
 
     private void showDialog() {
@@ -257,5 +265,31 @@ public class BookDetails extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     // Handle failure
                 });
+    }
+
+    private void loadReadingProgress(String bookId) {
+        firestore.collection("reading_progress")
+                .document(bookId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        double progress = documentSnapshot.getDouble("progress");
+                        bookReadingProgress.setProgress((int) progress);
+                        bookReadingProgress.setVisibility(View.VISIBLE);
+                    } else {
+                        bookReadingProgress.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> bookReadingProgress.setVisibility(View.GONE));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload progress when returning to this activity
+        String bookId = getIntent().getStringExtra("id");
+        if (bookId != null) {
+            loadReadingProgress(bookId);
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.aklatbayan.R;
 import com.example.aklatbayan.BookDetails;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +59,21 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 .error(R.drawable.no_cover_available)
                 .into(holder.homeThumbnail);
 
+        FirebaseFirestore.getInstance()
+                .collection("reading_progress")
+                .document(model.getId())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        float progress = documentSnapshot.getDouble("progress").floatValue();
+                        holder.readingProgress.setProgress(Math.round(progress));
+                        holder.readingProgress.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.readingProgress.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> holder.readingProgress.setVisibility(View.GONE));
+
         holder.itemView.setOnClickListener(v -> {
 
             Intent intent = new Intent(context, BookDetails.class);
@@ -83,6 +100,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         TextView title, desc, category;
         ImageView homeThumbnail;
+        ProgressBar readingProgress;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -90,6 +108,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             desc = itemView.findViewById(R.id.txtDesc);
             category = itemView.findViewById(R.id.txtCategory);
             homeThumbnail = itemView.findViewById(R.id.homeThumbnail);
+            readingProgress = itemView.findViewById(R.id.readingProgress);
         }
     }
 }
