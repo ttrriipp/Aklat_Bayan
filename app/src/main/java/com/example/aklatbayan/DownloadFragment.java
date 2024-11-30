@@ -1,9 +1,11 @@
 package com.example.aklatbayan;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import com.example.aklatbayan.Recycler.Model;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class DownloadFragment extends Fragment {
@@ -34,7 +37,7 @@ public class DownloadFragment extends Fragment {
         emptyView = view.findViewById(R.id.emptyView);
         
         downloadedBooks = new ArrayList<>();
-        adapter = new Adapter(requireContext(), downloadedBooks);
+        adapter = new Adapter(requireContext(), downloadedBooks, true);
         
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -76,5 +79,34 @@ public class DownloadFragment extends Fragment {
         super.onResume();
         // Reload downloads when returning to fragment
         loadDownloadedBooks();
+    }
+
+    private void showDeleteDialog(Model book) {
+        Dialog deleteDialog = new Dialog(requireContext(), R.style.Dialog_style);
+        deleteDialog.setContentView(R.layout.delete_dialog);
+        deleteDialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
+
+        Button btnDelete = deleteDialog.findViewById(R.id.btnDelete);
+        Button btnCancel = deleteDialog.findViewById(R.id.btnCancel);
+
+        btnDelete.setOnClickListener(v -> {
+            File bookFile = new File(requireContext().getFilesDir() + "/books/" + book.getId() + ".pdf");
+            if (bookFile.exists() && bookFile.delete()) {
+                // Remove from downloads collection
+                firestore.collection("downloads")
+                        .document(book.getId())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(requireContext(), "Book deleted successfully", Toast.LENGTH_SHORT).show();
+                            loadDownloadedBooks(); // Refresh the list
+                        })
+                        .addOnFailureListener(e -> 
+                            Toast.makeText(requireContext(), "Error updating database", Toast.LENGTH_SHORT).show());
+            }
+            deleteDialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> deleteDialog.dismiss());
+        deleteDialog.show();
     }
 }

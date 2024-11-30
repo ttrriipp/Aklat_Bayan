@@ -109,6 +109,14 @@ public class BookDetails extends AppCompatActivity {
         if (bookId != null) {
             loadReadingProgress(bookId);
         }
+
+        if (isBookDownloaded(getIntent().getStringExtra("id"))) {
+            btnDownload.setImageResource(R.drawable.baseline_delete_24); // Create this drawable
+            btnDownload.setOnClickListener(v -> showDeleteDialog());
+        } else {
+            btnDownload.setImageResource(R.drawable.baseline_download_48);
+            btnDownload.setOnClickListener(v -> showDialog());
+        }
     }
 
     private void showDialog() {
@@ -291,5 +299,38 @@ public class BookDetails extends AppCompatActivity {
         if (bookId != null) {
             loadReadingProgress(bookId);
         }
+    }
+
+    private void showDeleteDialog() {
+        Dialog deleteDialog = new Dialog(this, R.style.Dialog_style);
+        deleteDialog.setContentView(R.layout.delete_dialog);
+        deleteDialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
+
+        Button btnDelete = deleteDialog.findViewById(R.id.btnDelete);
+        Button btnCancel = deleteDialog.findViewById(R.id.btnCancel);
+        String bookId = getIntent().getStringExtra("id");
+
+        btnDelete.setOnClickListener(v -> {
+            if (bookId != null) {
+                File bookFile = new File(getBookDirectory(), bookId + ".pdf");
+                if (bookFile.exists() && bookFile.delete()) {
+                    // Remove from downloads collection
+                    firestore.collection("downloads")
+                            .document(bookId)
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "Book deleted successfully", Toast.LENGTH_SHORT).show();
+                                // Update download button visibility
+                                btnDownload.setVisibility(View.VISIBLE);
+                            })
+                            .addOnFailureListener(e -> 
+                                Toast.makeText(this, "Error updating database", Toast.LENGTH_SHORT).show());
+                }
+            }
+            deleteDialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> deleteDialog.dismiss());
+        deleteDialog.show();
     }
 }

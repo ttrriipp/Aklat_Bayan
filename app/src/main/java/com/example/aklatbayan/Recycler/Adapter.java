@@ -24,10 +24,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     Context context;
     ArrayList<Model> titleList;
+    private boolean isDownloadList = false;
 
-    public Adapter(Context context, ArrayList<Model> titleList) {
+    public Adapter(Context context, ArrayList<Model> titleList, boolean isDownloadList) {
         this.context = context;
         this.titleList = titleList;
+        this.isDownloadList = isDownloadList;
     }
 
     public void setFilteredList(List<Model> filteredList) {
@@ -101,6 +103,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         TextView title, desc, category;
         ImageView homeThumbnail;
         ProgressBar readingProgress;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
