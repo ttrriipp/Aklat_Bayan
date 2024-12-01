@@ -11,12 +11,12 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String dbname = "AklatBayanDB";
     private static final int dbversion = 1;
 
-    private final static String tblname = "USERS";
-    private final static String columnID = "ID";
-    private final static String columnUserName = "USERNAME";
-    private final static String columnEmail = "EMAIL";
-    private final static String columnPassword = "PASSWORD";
-    private final static String columnDeleted = "DELETED";
+    public final static String tblname = "USERS";
+    public final static String columnID = "ID";
+    public final static String columnUserName = "USERNAME";
+    public final static String columnEmail = "EMAIL";
+    public final static String columnPassword = "PASSWORD";
+    public final static String columnDeleted = "DELETED";
 
     public DBHelper(Context context) {
         super(context, dbname, null, dbversion);
@@ -49,6 +49,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.insert(tblname, null, values);
         db.close();
+    }
+
+    public boolean checkUser(String EMAIL, String PASSWORD) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + tblname + " WHERE " + columnEmail + "=? AND " + columnPassword + "=?";
+        Cursor cursor = db.rawQuery(query, new String[]{EMAIL, PASSWORD});
+
+        boolean isValid = cursor.getCount() > 0;
+        cursor.close();
+        return isValid;
     }
 
     //Checking if available pa username
