@@ -8,6 +8,19 @@
     tools:context=".LoginPage"
     android:background="@drawable/bg1">
 
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/back"
+        android:padding="12dp"
+        android:src="@drawable/back_svgrepo_com"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -29,8 +42,8 @@
     <LinearLayout
 
         android:id="@+id/linearLayout2"
-        android:layout_width="412dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/whitebg"
         android:orientation="vertical"
         android:paddingLeft="30dp"
@@ -84,12 +97,12 @@
                 android:id="@+id/tgl3"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:textOff=" "
-                android:textOn=" "
-                android:background="@drawable/passwordtoggle"
-                android:layout_marginEnd="10dp"
+                android:layout_gravity="end"
                 android:layout_marginTop="10dp"
-                android:layout_gravity="end" />
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/passwordtoggle"
+                android:textOff=" "
+                android:textOn=" " />
 
             <EditText
                 android:id="@+id/txtPassword2"
@@ -101,8 +114,7 @@
                 android:inputType="textPassword"
                 android:paddingLeft="10dp"
                 android:text=""
-                android:textColor="#8e8e8e"
-                />
+                android:textColor="#8e8e8e" />
         </FrameLayout>
 
         <CheckBox
