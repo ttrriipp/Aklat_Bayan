@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aklatbayan.Recycler.Adapter;
 import com.example.aklatbayan.Recycler.Model;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,9 +23,9 @@ import java.util.ArrayList;
 public class DownloadFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar loadingIndicator;
+    private TextView emptyView;
     private Adapter adapter;
     private ArrayList<Model> downloadedBooks;
-    private FirebaseFirestore firestore;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +34,7 @@ public class DownloadFragment extends Fragment {
         
         recyclerView = view.findViewById(R.id.rcv);
         loadingIndicator = view.findViewById(R.id.loadingIndicator);
+        emptyView = view.findViewById(R.id.emptyView);
         
         downloadedBooks = new ArrayList<>();
         adapter = new Adapter(requireContext(), downloadedBooks, true);
@@ -43,7 +42,6 @@ public class DownloadFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         
-        firestore = FirebaseFirestore.getInstance();
         loadDownloadedBooks();
         
         return view;
@@ -51,33 +49,50 @@ public class DownloadFragment extends Fragment {
 
     private void loadDownloadedBooks() {
         loadingIndicator.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
+        File downloadDir = new File(requireContext().getFilesDir(), "books");
+        
+        if (!downloadDir.exists() || downloadDir.listFiles() == null || downloadDir.listFiles().length == 0) {
+            loadingIndicator.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            return;
+        }
 
-        firestore.collection("downloads")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && isAdded()) {
-                        downloadedBooks.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Model book = document.toObject(Model.class);
-                            downloadedBooks.add(book);
-                        }
-                        
-                        loadingIndicator.setVisibility(View.GONE);
-                        if (downloadedBooks.isEmpty()) {
-                            Toast.makeText(requireContext(), "No downloaded books yet", Toast.LENGTH_SHORT).show();
-                        } else {
-                            recyclerView.setVisibility(View.VISIBLE);
-                            adapter.notifyDataSetChanged();
-                        }
+        // Load books from local storage
+        downloadedBooks.clear();
+        File[] files = downloadDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".pdf")) {
+                    String bookId = file.getName().replace(".pdf", "");
+                    // Get book details from shared preferences
+                    Model book = getBookDetails(bookId);
+                    if (book != null) {
+                        downloadedBooks.add(book);
                     }
-                })
-                .addOnFailureListener(e -> {
-                    if (isAdded()) {
-                        loadingIndicator.setVisibility(View.GONE);
-                        Toast.makeText(requireContext(), "Error loading downloads", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                }
+            }
+        }
+
+        loadingIndicator.setVisibility(View.GONE);
+        if (downloadedBooks.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
+            emptyView.setVisibility(View.GONE);
+        }
+    }
+
+    private Model getBookDetails(String bookId) {
+        // Get book details from SharedPreferences
+        android.content.SharedPreferences prefs = requireContext().getSharedPreferences("downloaded_books", android.content.Context.MODE_PRIVATE);
+        String bookJson = prefs.getString(bookId, null);
+        if (bookJson != null) {
+            return new com.google.gson.Gson().fromJson(bookJson, Model.class);
+        }
+        return null;
     }
 
     @Override
@@ -97,16 +112,12 @@ public class DownloadFragment extends Fragment {
         btnDelete.setOnClickListener(v -> {
             File bookFile = new File(requireContext().getFilesDir() + "/books/" + book.getId() + ".pdf");
             if (bookFile.exists() && bookFile.delete()) {
-                // Remove from downloads collection
-                firestore.collection("downloads")
-                        .document(book.getId())
-                        .delete()
-                        .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(requireContext(), "Book deleted successfully", Toast.LENGTH_SHORT).show();
-                            loadDownloadedBooks(); // Refresh the list
-                        })
-                        .addOnFailureListener(e -> 
-                            Toast.makeText(requireContext(), "Error updating database", Toast.LENGTH_SHORT).show());
+                // Remove book details from SharedPreferences
+                android.content.SharedPreferences prefs = requireContext().getSharedPreferences("downloaded_books", android.content.Context.MODE_PRIVATE);
+                prefs.edit().remove(book.getId()).apply();
+                
+                Toast.makeText(requireContext(), "Book deleted successfully", Toast.LENGTH_SHORT).show();
+                loadDownloadedBooks(); // Refresh the list
             }
             deleteDialog.dismiss();
         });

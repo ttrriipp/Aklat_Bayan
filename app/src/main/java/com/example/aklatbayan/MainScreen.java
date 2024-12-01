@@ -23,11 +23,7 @@ public class MainScreen extends AppCompatActivity {
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
-            if (item.getItemId() == R.id.history) {
-                replaceFragment(new HistoryFragment());
-            } else if (item.getItemId() == R.id.catalog) {
-                replaceFragment(new CatalogFragment());
-            } else if (item.getItemId() == R.id.home) {
+             if (item.getItemId() == R.id.home) {
                 replaceFragment(new HomeFragment());
             } else if (item.getItemId() == R.id.download) {
                 replaceFragment(new DownloadFragment());

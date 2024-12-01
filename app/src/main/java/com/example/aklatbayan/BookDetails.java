@@ -1,6 +1,7 @@
 package com.example.aklatbayan;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -323,15 +324,10 @@ public class BookDetails extends AppCompatActivity {
     }
 
     private void saveDownloadedBook(Model book) {
-        firestore.collection("downloads")
-                .document(book.getId())
-                .set(book)
-                .addOnSuccessListener(aVoid -> {
-                    // Book info saved successfully
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure
-                });
+        // Save book details to SharedPreferences
+        android.content.SharedPreferences prefs = getSharedPreferences("downloaded_books", Context.MODE_PRIVATE);
+        String bookJson = new com.google.gson.Gson().toJson(book);
+        prefs.edit().putString(book.getId(), bookJson).apply();
     }
 
     private void loadReadingProgress(String bookId) {
