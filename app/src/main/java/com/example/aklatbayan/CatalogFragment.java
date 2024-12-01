@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import java.util.List;
 public class CatalogFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar loadingIndicator;
+    private TextView emptyView;
     private Adapter adapter;
     private ArrayList<Model> favoriteList;
     private FirebaseFirestore firestore;
@@ -33,6 +35,7 @@ public class CatalogFragment extends Fragment {
         
         recyclerView = view.findViewById(R.id.rcv);
         loadingIndicator = view.findViewById(R.id.loadingIndicator);
+        emptyView = view.findViewById(R.id.emptyView);
         
         favoriteList = new ArrayList<>();
         adapter = new Adapter(requireContext(), favoriteList, false);
@@ -51,11 +54,13 @@ public class CatalogFragment extends Fragment {
     private void loadFavoriteBooks() {
         loadingIndicator.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
 
         String favoriteBooks = sharedPreferences.getString("favoriteBooks", "");
         if (favoriteBooks.isEmpty()) {
             loadingIndicator.setVisibility(View.GONE);
-            Toast.makeText(requireContext(), "No favorite books yet", Toast.LENGTH_SHORT).show();
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -75,9 +80,11 @@ public class CatalogFragment extends Fragment {
                         
                         loadingIndicator.setVisibility(View.GONE);
                         if (favoriteList.isEmpty()) {
-                            Toast.makeText(requireContext(), "No favorite books yet", Toast.LENGTH_SHORT).show();
+                            recyclerView.setVisibility(View.GONE);
+                            emptyView.setVisibility(View.VISIBLE);
                         } else {
                             recyclerView.setVisibility(View.VISIBLE);
+                            emptyView.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -85,6 +92,8 @@ public class CatalogFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     if (isAdded()) {
                         loadingIndicator.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
                         Toast.makeText(requireContext(), "Error loading favorites", Toast.LENGTH_SHORT).show();
                     }
                 });

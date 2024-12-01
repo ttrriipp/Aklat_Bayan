@@ -75,9 +75,11 @@ public class HomeFragment extends Fragment {
 
         if (filteredList.isEmpty()) {
             binding.data.setVisibility(View.VISIBLE);
+            binding.rcv.setVisibility(View.GONE);
         } else {
             adapter.setFilteredList(filteredList);
             binding.data.setVisibility(View.GONE);
+            binding.rcv.setVisibility(View.VISIBLE);
         }
     }
 

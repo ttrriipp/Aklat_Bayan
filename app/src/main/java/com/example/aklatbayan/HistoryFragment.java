@@ -42,7 +42,6 @@ public class HistoryFragment extends Fragment {
 
     private void loadHistory() {
         loadingIndicator.setVisibility(View.VISIBLE);
-        historyContainer.setVisibility(View.GONE);
 
         firestore.collection("reading_history")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
