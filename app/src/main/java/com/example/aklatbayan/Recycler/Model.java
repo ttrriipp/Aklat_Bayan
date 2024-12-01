@@ -2,6 +2,7 @@ package com.example.aklatbayan.Recycler;
 
 public class Model {
     String id, title, author, desc, category, pdfLink, downloadUrl, thumbnailUrl;
+    long timestamp;
 
     public Model() {
     }
@@ -79,5 +80,13 @@ public class Model {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

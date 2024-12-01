@@ -397,23 +397,20 @@ public class BookDetails extends AppCompatActivity {
         String bookId = getIntent().getStringExtra("id");
         if (bookId == null) return;
 
+        Model historyEntry = new Model(
+            bookId,
+            getIntent().getStringExtra("txtTitle"),
+            getIntent().getStringExtra("author"),
+            getIntent().getStringExtra("desc"),
+            getIntent().getStringExtra("category"),
+            getIntent().getStringExtra("pdfLink"),
+            getIntent().getStringExtra("downloadUrl"),
+            getIntent().getStringExtra("thumbnailUrl")
+        );
+        historyEntry.setTimestamp(System.currentTimeMillis());
+
         firestore.collection(HISTORY_COLLECTION)
-                .add(new Model(
-                    bookId,
-                    getIntent().getStringExtra("txtTitle"),
-                    getIntent().getStringExtra("author"),
-                    "",  // description
-                    getIntent().getStringExtra("category"),
-                    "",  // pdfLink
-                    "",  // downloadUrl
-                    getIntent().getStringExtra("thumbnailUrl")
-                ))
-                .addOnSuccessListener(documentReference -> {
-                    documentReference.update(
-                        "id", bookId,  // Make sure id field is set
-                        "timestamp", System.currentTimeMillis()
-                    );
-                })
+                .add(historyEntry)
                 .addOnFailureListener(e -> 
                     Toast.makeText(this, "Failed to save to history", Toast.LENGTH_SHORT).show());
     }

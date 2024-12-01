@@ -1,5 +1,6 @@
 package com.example.aklatbayan;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ public class BookPdf extends AppCompatActivity {
     private String bookId;
     private int totalPages = 0;
     private int currentPage = 0;
+    private SharedPreferences sharedPreferences;
+    private static final String READING_PROGRESS_PREF = "ReadingProgress";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,8 @@ public class BookPdf extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         firestore = FirebaseFirestore.getInstance();
+        sharedPreferences = getSharedPreferences(READING_PROGRESS_PREF, MODE_PRIVATE);
+        
         String pdfLink = getIntent().getStringExtra("pdfLink");
         bookId = getIntent().getStringExtra("id");
 
@@ -58,18 +63,36 @@ public class BookPdf extends AppCompatActivity {
     }
 
     private void loadReadingProgress() {
-        firestore.collection("reading_progress")
-                .document(bookId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        currentPage = documentSnapshot.getLong("currentPage").intValue();
-                    }
-                });
+        if (bookId != null) {
+            currentPage = sharedPreferences.getInt(bookId + "_page", 0);
+            totalPages = sharedPreferences.getInt(bookId + "_total", 0);
+            
+            // Also update Firestore for sync across devices
+            firestore.collection("reading_progress")
+                    .document(bookId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            int firestorePage = documentSnapshot.getLong("currentPage").intValue();
+                            // Use the most recent page between local and cloud
+                            if (firestorePage > currentPage) {
+                                currentPage = firestorePage;
+                                saveReadingProgress();
+                            }
+                        }
+                    });
+        }
     }
 
     private void saveReadingProgress() {
         if (bookId != null && totalPages > 0) {
+            // Save to SharedPreferences
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt(bookId + "_page", currentPage);
+            editor.putInt(bookId + "_total", totalPages);
+            editor.apply();
+
+            // Also save to Firestore for sync
             Map<String, Object> progress = new HashMap<>();
             progress.put("currentPage", currentPage);
             progress.put("totalPages", totalPages);
@@ -79,7 +102,7 @@ public class BookPdf extends AppCompatActivity {
                     .document(bookId)
                     .set(progress)
                     .addOnFailureListener(e -> 
-                        Toast.makeText(this, "Failed to save progress", Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "Failed to save progress to cloud", Toast.LENGTH_SHORT).show());
         }
     }
 

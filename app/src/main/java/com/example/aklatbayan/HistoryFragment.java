@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,25 +17,20 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 
 public class HistoryFragment extends Fragment {
-    private RecyclerView recyclerView;
+    private LinearLayout historyContainer;
     private TextView emptyView;
-    private Adapter adapter;
-    private ArrayList<Model> historyList;
     private FirebaseFirestore firestore;
+    private static final long MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
+    private static final long MILLIS_PER_WEEK = 7 * MILLIS_PER_DAY;
+    private static final long MILLIS_PER_MONTH = 30 * MILLIS_PER_DAY;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         
-        recyclerView = view.findViewById(R.id.rcv);
+        historyContainer = view.findViewById(R.id.historyContainer);
         emptyView = view.findViewById(R.id.textView10);
-        
-        historyList = new ArrayList<>();
-        adapter = new Adapter(requireContext(), historyList, false);
-        
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         
         firestore = FirebaseFirestore.getInstance();
         loadHistory();
@@ -47,109 +43,103 @@ public class HistoryFragment extends Fragment {
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && isAdded()) {  // Check if fragment is still attached
-                        historyList.clear();
+                    if (task.isSuccessful() && isAdded()) {
+                        ArrayList<Model> recentBooks = new ArrayList<>();
+                        ArrayList<Model> lastWeekBooks = new ArrayList<>();
+                        ArrayList<Model> lastMonthBooks = new ArrayList<>();
+                        ArrayList<Model> olderBooks = new ArrayList<>();
                         ArrayList<String> addedBooks = new ArrayList<>();
+                        
+                        long currentTime = System.currentTimeMillis();
                         
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             try {
-                                // Safely get values with defaults if missing
-                                String bookId = document.getString("id");
-                                if (bookId == null || addedBooks.contains(bookId)) {
-                                    continue;
+                                Model book = document.toObject(Model.class);
+                                if (book != null && book.getId() != null && !addedBooks.contains(book.getId())) {
+                                    addedBooks.add(book.getId());
+                                    long timeDiff = currentTime - book.getTimestamp();
+                                    
+                                    if (timeDiff < MILLIS_PER_DAY) {
+                                        recentBooks.add(book);
+                                    } else if (timeDiff < MILLIS_PER_WEEK) {
+                                        lastWeekBooks.add(book);
+                                    } else if (timeDiff < MILLIS_PER_MONTH) {
+                                        lastMonthBooks.add(book);
+                                    } else {
+                                        olderBooks.add(book);
+                                    }
                                 }
-                                
-                                String title = document.getString("title");
-                                String author = document.getString("author");
-                                String category = document.getString("category");
-                                String thumbnailUrl = document.getString("thumbnailUrl");
-                                Long timestamp = document.getLong("timestamp");
-                                
-                                // Skip if essential data is missing
-                                if (title == null || title.isEmpty()) {
-                                    continue;
-                                }
-
-                                String timeAgo = timestamp != null ? 
-                                    calculateTimeAgo(timestamp) : "recently";
-                                
-                                Model book = new Model(
-                                    bookId,
-                                    title,
-                                    author != null ? author : "Unknown Author",
-                                    "Viewed " + timeAgo,
-                                    category != null ? category : "Uncategorized",
-                                    "",  // pdfLink
-                                    "",  // downloadUrl
-                                    thumbnailUrl != null ? thumbnailUrl : ""
-                                );
-                                
-                                historyList.add(book);
-                                addedBooks.add(bookId);
                             } catch (Exception e) {
-                                // Skip any problematic documents
                                 continue;
                             }
                         }
                         
-                        if (isAdded()) {  // Check again before updating UI
-                            if (historyList.isEmpty()) {
-                                recyclerView.setVisibility(View.GONE);
-                                emptyView.setText("No reading history yet");
-                                emptyView.setVisibility(View.VISIBLE);
-                            } else {
-                                recyclerView.setVisibility(View.VISIBLE);
-                                emptyView.setVisibility(View.GONE);
-                                adapter.notifyDataSetChanged();
-                            }
+                        historyContainer.removeAllViews();
+                        boolean hasAnyBooks = false;
+
+                        // Add Recent Books Section
+                        if (!recentBooks.isEmpty()) {
+                            addSection("Recently Viewed", recentBooks);
+                            hasAnyBooks = true;
                         }
+
+                        // Add Last Week Books Section
+                        if (!lastWeekBooks.isEmpty()) {
+                            addSection("Viewed last week", lastWeekBooks);
+                            hasAnyBooks = true;
+                        }
+
+                        // Add Last Month Books Section
+                        if (!lastMonthBooks.isEmpty()) {
+                            addSection("Viewed last month", lastMonthBooks);
+                            hasAnyBooks = true;
+                        }
+
+                        // Add Older Books Section
+                        if (!olderBooks.isEmpty()) {
+                            addSection("Older", olderBooks);
+                            hasAnyBooks = true;
+                        }
+
+                        updateUI(hasAnyBooks);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    if (isAdded()) {  // Check if fragment is still attached
-                        recyclerView.setVisibility(View.GONE);
+                    if (isAdded()) {
+                        historyContainer.setVisibility(View.GONE);
                         emptyView.setText("Error loading history");
                         emptyView.setVisibility(View.VISIBLE);
                     }
                 });
     }
 
-    private String calculateTimeAgo(long timestamp) {
-        long currentTime = System.currentTimeMillis();
-        long timeDiff = currentTime - timestamp;
+    private void addSection(String title, ArrayList<Model> books) {
+        // Add section header
+        TextView headerView = new TextView(requireContext());
+        headerView.setText(title);
+        headerView.setTextSize(18);
+        headerView.setPadding(32, 32, 32, 16);
+        headerView.setTextColor(getResources().getColor(android.R.color.black));
+        historyContainer.addView(headerView);
+        
+        // Add RecyclerView for this section
+        RecyclerView recyclerView = new RecyclerView(requireContext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        Adapter adapter = new Adapter(requireContext(), books, false);
+        recyclerView.setAdapter(adapter);
+        
+        historyContainer.addView(recyclerView);
+    }
 
-        // Convert to minutes
-        long minutes = timeDiff / (1000 * 60);
-        
-        if (minutes < 1) {
-            return "just now";
+    private void updateUI(boolean hasBooks) {
+        if (!hasBooks) {
+            historyContainer.setVisibility(View.GONE);
+            emptyView.setText("No reading history yet");
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            historyContainer.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
         }
-        
-        if (minutes < 60) {
-            return minutes + (minutes == 1 ? " minute ago" : " minutes ago");
-        }
-        
-        // Convert to hours
-        long hours = minutes / 60;
-        if (hours < 24) {
-            return hours + (hours == 1 ? " hour ago" : " hours ago");
-        }
-        
-        // Convert to days
-        long days = hours / 24;
-        if (days < 30) {
-            return days + (days == 1 ? " day ago" : " days ago");
-        }
-        
-        // Convert to months
-        long months = days / 30;
-        if (months < 12) {
-            return months + (months == 1 ? " month ago" : " months ago");
-        }
-        
-        // Convert to years
-        long years = months / 12;
-        return years + (years == 1 ? " year ago" : " years ago");
     }
 
     @Override
