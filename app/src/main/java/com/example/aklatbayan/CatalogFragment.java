@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class CatalogFragment extends Fragment {
     private RecyclerView recyclerView;
-    private TextView emptyView;
+    private ProgressBar loadingIndicator;
     private Adapter adapter;
     private ArrayList<Model> favoriteList;
     private FirebaseFirestore firestore;
@@ -31,7 +32,7 @@ public class CatalogFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_catalog, container, false);
         
         recyclerView = view.findViewById(R.id.rcv);
-        emptyView = view.findViewById(R.id.textView13);
+        loadingIndicator = view.findViewById(R.id.loadingIndicator);
         
         favoriteList = new ArrayList<>();
         adapter = new Adapter(requireContext(), favoriteList, false);
@@ -48,11 +49,13 @@ public class CatalogFragment extends Fragment {
     }
 
     private void loadFavoriteBooks() {
+        loadingIndicator.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+
         String favoriteBooks = sharedPreferences.getString("favoriteBooks", "");
         if (favoriteBooks.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyView.setText("No favorite books yet");
-            emptyView.setVisibility(View.VISIBLE);
+            loadingIndicator.setVisibility(View.GONE);
+            Toast.makeText(requireContext(), "No favorite books yet", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -61,7 +64,7 @@ public class CatalogFragment extends Fragment {
         firestore.collection("Books")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && isAdded()) {
                         favoriteList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Model book = document.toObject(Model.class);
@@ -70,15 +73,19 @@ public class CatalogFragment extends Fragment {
                             }
                         }
                         
+                        loadingIndicator.setVisibility(View.GONE);
                         if (favoriteList.isEmpty()) {
-                            recyclerView.setVisibility(View.GONE);
-                            emptyView.setText("No favorite books yet");
-                            emptyView.setVisibility(View.VISIBLE);
+                            Toast.makeText(requireContext(), "No favorite books yet", Toast.LENGTH_SHORT).show();
                         } else {
                             recyclerView.setVisibility(View.VISIBLE);
-                            emptyView.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (isAdded()) {
+                        loadingIndicator.setVisibility(View.GONE);
+                        Toast.makeText(requireContext(), "Error loading favorites", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

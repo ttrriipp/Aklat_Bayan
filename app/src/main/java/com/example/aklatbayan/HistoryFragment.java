@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 
 public class HistoryFragment extends Fragment {
     private LinearLayout historyContainer;
-    private TextView emptyView;
+    private ProgressBar loadingIndicator;
     private FirebaseFirestore firestore;
     private static final long MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
     private static final long MILLIS_PER_WEEK = 7 * MILLIS_PER_DAY;
@@ -30,7 +32,7 @@ public class HistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         
         historyContainer = view.findViewById(R.id.historyContainer);
-        emptyView = view.findViewById(R.id.textView10);
+        loadingIndicator = view.findViewById(R.id.loadingIndicator);
         
         firestore = FirebaseFirestore.getInstance();
         loadHistory();
@@ -39,6 +41,9 @@ public class HistoryFragment extends Fragment {
     }
 
     private void loadHistory() {
+        loadingIndicator.setVisibility(View.VISIBLE);
+        historyContainer.setVisibility(View.GONE);
+
         firestore.collection("reading_history")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
@@ -101,14 +106,15 @@ public class HistoryFragment extends Fragment {
                             hasAnyBooks = true;
                         }
 
+                        loadingIndicator.setVisibility(View.GONE);
                         updateUI(hasAnyBooks);
                     }
                 })
                 .addOnFailureListener(e -> {
                     if (isAdded()) {
+                        loadingIndicator.setVisibility(View.GONE);
                         historyContainer.setVisibility(View.GONE);
-                        emptyView.setText("Error loading history");
-                        emptyView.setVisibility(View.VISIBLE);
+                        Toast.makeText(requireContext(), "Error loading history", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -134,11 +140,9 @@ public class HistoryFragment extends Fragment {
     private void updateUI(boolean hasBooks) {
         if (!hasBooks) {
             historyContainer.setVisibility(View.GONE);
-            emptyView.setText("No reading history yet");
-            emptyView.setVisibility(View.VISIBLE);
+            Toast.makeText(requireContext(), "No reading history yet", Toast.LENGTH_SHORT).show();
         } else {
             historyContainer.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
         }
     }
 

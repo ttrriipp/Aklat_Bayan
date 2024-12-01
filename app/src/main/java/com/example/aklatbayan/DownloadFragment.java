@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 public class DownloadFragment extends Fragment {
     private RecyclerView recyclerView;
-    private TextView emptyView;
+    private ProgressBar loadingIndicator;
     private Adapter adapter;
     private ArrayList<Model> downloadedBooks;
     private FirebaseFirestore firestore;
@@ -34,7 +35,7 @@ public class DownloadFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_download, container, false);
         
         recyclerView = view.findViewById(R.id.rcv);
-        emptyView = view.findViewById(R.id.emptyView);
+        loadingIndicator = view.findViewById(R.id.loadingIndicator);
         
         downloadedBooks = new ArrayList<>();
         adapter = new Adapter(requireContext(), downloadedBooks, true);
@@ -49,27 +50,32 @@ public class DownloadFragment extends Fragment {
     }
 
     private void loadDownloadedBooks() {
+        loadingIndicator.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+
         firestore.collection("downloads")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && isAdded()) {
                         downloadedBooks.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Model book = document.toObject(Model.class);
                             downloadedBooks.add(book);
                         }
                         
+                        loadingIndicator.setVisibility(View.GONE);
                         if (downloadedBooks.isEmpty()) {
-                            recyclerView.setVisibility(View.GONE);
-                            emptyView.setVisibility(View.VISIBLE);
+                            Toast.makeText(requireContext(), "No downloaded books yet", Toast.LENGTH_SHORT).show();
                         } else {
                             recyclerView.setVisibility(View.VISIBLE);
-                            emptyView.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
-                    } else {
-                        Toast.makeText(requireContext(), 
-                            "Error loading downloads", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (isAdded()) {
+                        loadingIndicator.setVisibility(View.GONE);
+                        Toast.makeText(requireContext(), "Error loading downloads", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -77,7 +83,6 @@ public class DownloadFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Reload downloads when returning to fragment
         loadDownloadedBooks();
     }
 
