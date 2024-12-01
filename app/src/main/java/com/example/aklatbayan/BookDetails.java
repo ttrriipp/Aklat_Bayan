@@ -2,6 +2,7 @@ package com.example.aklatbayan;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BookDetails extends AppCompatActivity {
     ImageButton btnBack, btnDownload;
@@ -40,6 +44,8 @@ public class BookDetails extends AppCompatActivity {
     private String downloadUrl;
     private String pdfLink;
     private ProgressBar bookReadingProgress;
+    private SharedPreferences sharedPreferences;
+    private String favoriteBooks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +123,47 @@ public class BookDetails extends AppCompatActivity {
             btnDownload.setImageResource(R.drawable.baseline_download_48);
             btnDownload.setOnClickListener(v -> showDialog());
         }
+
+        sharedPreferences = getSharedPreferences("Favorites", MODE_PRIVATE);
+        favoriteBooks = sharedPreferences.getString("favoriteBooks", "");
+
+        // Check if book is already favorite
+        btnFave.setChecked(favoriteBooks.contains(bookId));
+
+        btnFave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String bookId = getIntent().getStringExtra("id");
+                String currentFavorites = sharedPreferences.getString("favoriteBooks", "");
+                
+                if (btnFave.isChecked()) {
+                    // Add to favorites
+                    if (!currentFavorites.isEmpty()) {
+                        currentFavorites += "," + bookId;
+                    } else {
+                        currentFavorites = bookId;
+                    }
+                    Toast.makeText(BookDetails.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Remove from favorites
+                    if (currentFavorites.contains("," + bookId)) {
+                        currentFavorites = currentFavorites.replace("," + bookId, "");
+                    } else if (currentFavorites.contains(bookId + ",")) {
+                        currentFavorites = currentFavorites.replace(bookId + ",", "");
+                    } else {
+                        currentFavorites = currentFavorites.replace(bookId, "");
+                    }
+                    Toast.makeText(BookDetails.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
+                }
+
+                // Save updated favorites
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("favoriteBooks", currentFavorites);
+                editor.apply();
+                
+                favoriteBooks = currentFavorites;
+            }
+        });
     }
 
     private void showDialog() {
