@@ -16,17 +16,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <ToggleButton
-            android:id="@+id/btnFave"
+        <ImageButton
+            android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/toggle_fave"
-            android:textOff=" "
-            android:textOn=" "
+            android:layout_marginStart="8dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:padding="10dp"
+            android:src="@drawable/back_svgrepo_com"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
@@ -39,206 +39,109 @@
             android:padding="10dp"
             android:src="@drawable/baseline_download_48"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnFave"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            android:padding="10dp"
-            android:src="@drawable/back_svgrepo_com"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/details"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topBar">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/detailThumbnail"
+                android:layout_width="160dp"
+                android:layout_height="192dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/placeholder_image" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:text="Title"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/detailThumbnail"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Category"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/txtTitle"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+            <ProgressBar
+                android:id="@+id/bookReadingProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/txtCategory"
+                app:layout_constraintTop_toBottomOf="@+id/txtCategory" />
+
+            <TextView
+                android:id="@+id/descLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Description"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailThumbnail" />
+
+            <TextView
+                android:id="@+id/txtDescription"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Description text here"
+                android:textSize="20sp"
+                app:layout_constraintTop_toBottomOf="@+id/descLabel" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/detailsBook"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="16dp"
-                    app:layout_constraintBottom_toTopOf="@+id/bottomBar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent">
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TableLayout
-                        android:id="@+id/tableLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/txtTitle"
-                        app:layout_constraintTop_toBottomOf="@+id/txtTitle">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:id="@+id/txtCategory"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginRight="5dp"
-                                android:text="Category"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/NA"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="N/A"
-                                android:textSize="16sp" />
-
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </TableLayout>
-
-                    <TextView
-                        android:id="@+id/txtTitle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:ellipsize="none"
-                        android:maxLines="4"
-                        android:text="Title"
-                        android:textColor="@color/black"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/detailThumbnail"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/detailThumbnail"
-                        android:layout_width="160dp"
-                        android:layout_height="192dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:srcCompat="@drawable/placeholder_image" />
-
-                    <ProgressBar
-                        android:id="@+id/bookReadingProgress"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/detailThumbnail"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/detailThumbnail"
-                        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
-
-                    <TextView
-                        android:id="@+id/descLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="24dp"
-                        android:text="Description"
-                        android:textColor="@color/black"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/detailThumbnail" />
-
-                    <TextView
-                        android:id="@+id/txtDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse efficitur sollicitudin elit, eu suscipit nisl imperdiet sit amet. Duis vitae luctus lorem, et eleifend est. "
-                        android:textSize="20sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/descLabel" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </LinearLayout>
-        </ScrollView>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@drawable/background_blue"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        >
-
-
-        <Spinner
-            android:id="@+id/spnChapter"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:theme="@android:style/Widget.ListView.White"
-            app:layout_constraintBottom_toBottomOf="@+id/btnRead"
-            app:layout_constraintEnd_toStartOf="@+id/btnRead"
-            app:layout_constraintStart_toStartOf="@+id/bottomBar"
-            app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/btnRead"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/background_lightblue"
             android:drawableStart="@drawable/book_open_svgrepo_com"
@@ -249,20 +152,23 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/bottomBar"
-            app:layout_constraintEnd_toEndOf="@+id/bottomBar"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnFave"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.50121653" />
+        <ToggleButton
+            android:id="@+id/btnFave"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/toggle_fave"
+            android:textOff=" "
+            android:textOn=" "
+            app:layout_constraintBottom_toBottomOf="@+id/btnRead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnRead" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
