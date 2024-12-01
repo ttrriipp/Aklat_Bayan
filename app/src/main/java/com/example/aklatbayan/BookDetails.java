@@ -35,7 +35,7 @@ import java.util.HashMap;
 public class BookDetails extends AppCompatActivity {
     ImageButton btnBack, btnDownload;
     ToggleButton btnFave;
-    Button btnRead, btnCancel;
+    Button btnRead, btnCancel, btnDownloadFull;
     ActivityBookDetailsBinding binding;
     Dialog dialog;
     private FirebaseFirestore firestore;
@@ -181,15 +181,17 @@ public class BookDetails extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
         
         btnCancel = dialog.findViewById(R.id.btnCancel);
-        Button btnDownloadFull = dialog.findViewById(R.id.btnDownloadFull);
+        btnDownloadFull = dialog.findViewById(R.id.btnDownloadFull);
         downloadProgress = dialog.findViewById(R.id.downloadProgress);
         
         String bookId = getIntent().getStringExtra("id");
         
         btnDownloadFull.setOnClickListener(v -> {
             if (!isDownloading && !isBookDownloaded(bookId)) {
-                downloadBook(bookId);
+                downloadProgress.setVisibility(View.VISIBLE);
                 btnDownloadFull.setEnabled(false);
+                btnDownloadFull.setText("Downloading...");
+                downloadBook(bookId);
             } else if (isBookDownloaded(bookId)) {
                 Toast.makeText(this, "Book already downloaded", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
@@ -244,6 +246,8 @@ public class BookDetails extends AppCompatActivity {
                     Toast.makeText(BookDetails.this, errorMessage, Toast.LENGTH_SHORT).show();
                     isDownloading = false;
                     downloadProgress.setVisibility(View.GONE);
+                    btnDownloadFull.setEnabled(true);
+                    btnDownloadFull.setText("Download");
                     dialog.dismiss();
                 });
             }
@@ -255,6 +259,8 @@ public class BookDetails extends AppCompatActivity {
                         Toast.makeText(BookDetails.this, "Download failed", Toast.LENGTH_SHORT).show();
                         isDownloading = false;
                         downloadProgress.setVisibility(View.GONE);
+                        btnDownloadFull.setEnabled(true);
+                        btnDownloadFull.setText("Download");
                         dialog.dismiss();
                     });
                     return;
@@ -295,6 +301,8 @@ public class BookDetails extends AppCompatActivity {
                     Toast.makeText(BookDetails.this, "Download completed", Toast.LENGTH_SHORT).show();
                     isDownloading = false;
                     downloadProgress.setVisibility(View.GONE);
+                    btnDownloadFull.setEnabled(true);
+                    btnDownloadFull.setText("Download");
                     dialog.dismiss();
                 });
             }
