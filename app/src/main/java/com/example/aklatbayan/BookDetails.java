@@ -30,6 +30,7 @@ import okhttp3.Response;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.HashMap;
 
 public class BookDetails extends AppCompatActivity {
     ImageButton btnBack, btnDownload;
@@ -46,6 +47,7 @@ public class BookDetails extends AppCompatActivity {
     private ProgressBar bookReadingProgress;
     private SharedPreferences sharedPreferences;
     private String favoriteBooks;
+    private static final String HISTORY_COLLECTION = "reading_history";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +166,8 @@ public class BookDetails extends AppCompatActivity {
                 favoriteBooks = currentFavorites;
             }
         });
+
+        saveToHistory();
     }
 
     private void showDialog() {
@@ -379,5 +383,30 @@ public class BookDetails extends AppCompatActivity {
 
         btnCancel.setOnClickListener(v -> deleteDialog.dismiss());
         deleteDialog.show();
+    }
+
+    private void saveToHistory() {
+        String bookId = getIntent().getStringExtra("id");
+        if (bookId == null) return;
+
+        firestore.collection(HISTORY_COLLECTION)
+                .add(new Model(
+                    bookId,
+                    getIntent().getStringExtra("txtTitle"),
+                    getIntent().getStringExtra("author"),
+                    "",  // description
+                    getIntent().getStringExtra("category"),
+                    "",  // pdfLink
+                    "",  // downloadUrl
+                    getIntent().getStringExtra("thumbnailUrl")
+                ))
+                .addOnSuccessListener(documentReference -> {
+                    documentReference.update(
+                        "id", bookId,  // Make sure id field is set
+                        "timestamp", System.currentTimeMillis()
+                    );
+                })
+                .addOnFailureListener(e -> 
+                    Toast.makeText(this, "Failed to save to history", Toast.LENGTH_SHORT).show());
     }
 }
