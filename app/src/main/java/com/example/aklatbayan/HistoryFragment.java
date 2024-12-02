@@ -1,5 +1,6 @@
 package com.example.aklatbayan;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.aklatbayan.Recycler.Adapter;
 import com.example.aklatbayan.Recycler.Model;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.text.format.DateUtils;
+import android.content.SharedPreferences;
 
 public class HistoryFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -26,7 +25,7 @@ public class HistoryFragment extends Fragment {
     private TextView emptyView;
     private Adapter adapter;
     private ArrayList<Model> historyList;
-    private FirebaseFirestore firestore;
+    private static final String HISTORY_PREFS = "reading_history_prefs";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,66 +42,66 @@ public class HistoryFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         
-        firestore = FirebaseFirestore.getInstance();
         loadHistory();
         
         return view;
     }
 
     private void loadHistory() {
-        loadingIndicator.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-        emptyView.setVisibility(View.GONE);
+        SharedPreferences historyPrefs = requireContext().getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE);
+        String historyOrder = historyPrefs.getString("history_order", "");
+        
+        historyList.clear();
+        
+        if (!historyOrder.isEmpty()) {
+            String[] bookIds = historyOrder.split(",");
+            String currentLabel = null;
+            
+            for (String bookId : bookIds) {
+                // Get timestamp first to check time period
+                long timestamp = historyPrefs.getLong(bookId + "_timestamp", 0);
+                String timeLabel = getTimeLabel(timestamp);
+                
+                // Add header if it's a new time period
+                if (!timeLabel.equals(currentLabel)) {
+                    Model header = new Model();
+                    header.setTitle(timeLabel);
+                    header.setId("header_" + timestamp);
+                    historyList.add(header);
+                    currentLabel = timeLabel;
+                }
+                
+                // Create book model from stored data
+                Model book = new Model(
+                    bookId,
+                    historyPrefs.getString(bookId + "_title", ""),
+                    historyPrefs.getString(bookId + "_author", ""),
+                    historyPrefs.getString(bookId + "_desc", ""),
+                    historyPrefs.getString(bookId + "_category", ""),
+                    historyPrefs.getString(bookId + "_pdfLink", ""),
+                    historyPrefs.getString(bookId + "_downloadUrl", ""),
+                    historyPrefs.getString(bookId + "_thumbnailUrl", "")
+                );
+                book.setTimestamp(timestamp);
+                historyList.add(book);
+            }
+        }
+        
+        if (historyList.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+        
+        adapter.notifyDataSetChanged();
+    }
 
-        firestore.collection("reading_history")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && isAdded()) {
-                        historyList.clear();
-                        
-                        ArrayList<String> processedIds = new ArrayList<>();
-                        String currentLabel = null;
-                        
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Model book = document.toObject(Model.class);
-                            if (book.getId() != null && !processedIds.contains(book.getId())) {
-                                String timeLabel = getTimeLabel(book.getTimestamp());
-                                
-                                // Add header if it's a new time period
-                                if (!timeLabel.equals(currentLabel)) {
-                                    Model header = new Model();
-                                    header.setTitle(timeLabel);
-                                    header.setId("header_" + book.getTimestamp());
-                                    historyList.add(header);
-                                    currentLabel = timeLabel;
-                                }
-                                
-                                historyList.add(book);
-                                processedIds.add(book.getId());
-                            }
-                        }
-
-                        loadingIndicator.setVisibility(View.GONE);
-                        
-                        if (historyList.isEmpty()) {
-                            recyclerView.setVisibility(View.GONE);
-                            emptyView.setVisibility(View.VISIBLE);
-                        } else {
-                            recyclerView.setVisibility(View.VISIBLE);
-                            emptyView.setVisibility(View.GONE);
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (isAdded()) {
-                        loadingIndicator.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.GONE);
-                        emptyView.setVisibility(View.VISIBLE);
-                        Toast.makeText(requireContext(), "Error loading history", Toast.LENGTH_SHORT).show();
-                    }
-                });
+    public void clearHistory() {
+        SharedPreferences historyPrefs = requireContext().getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE);
+        historyPrefs.edit().clear().apply();
+        loadHistory();
     }
 
     private String getTimeLabel(long timestamp) {

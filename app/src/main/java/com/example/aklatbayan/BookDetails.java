@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -28,6 +29,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BookDetails extends AppCompatActivity {
     ImageButton btnBack, btnDownload;
@@ -45,6 +49,9 @@ public class BookDetails extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private String favoriteBooks;
     private static final String HISTORY_COLLECTION = "reading_history";
+    private static final String HISTORY_PREFS = "reading_history_prefs";
+    private static final String HISTORY_KEY = "history_list";
+    private SharedPreferences historyPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +105,7 @@ public class BookDetails extends AppCompatActivity {
         btnRead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveToHistory();
                 Intent intent = new Intent(BookDetails.this, BookPdf.class);
                 intent.putExtra("pdfLink", pdfLink);
                 intent.putExtra("id", getIntent().getStringExtra("id"));
@@ -171,7 +179,7 @@ public class BookDetails extends AppCompatActivity {
             }
         });
 
-        saveToHistory();
+        historyPrefs = getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE);
     }
 
     private void showDialog() {
@@ -396,21 +404,46 @@ public class BookDetails extends AppCompatActivity {
         String bookId = getIntent().getStringExtra("id");
         if (bookId == null) return;
 
-        Model historyEntry = new Model(
-            bookId,
-            getIntent().getStringExtra("txtTitle"),
-            getIntent().getStringExtra("author"),
-            getIntent().getStringExtra("desc"),
-            getIntent().getStringExtra("category"),
-            getIntent().getStringExtra("pdfLink"),
-            getIntent().getStringExtra("downloadUrl"),
-            getIntent().getStringExtra("thumbnailUrl")
-        );
-        historyEntry.setTimestamp(System.currentTimeMillis());
+        SharedPreferences historyPrefs = getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = historyPrefs.edit();
 
-        firestore.collection(HISTORY_COLLECTION)
-                .add(historyEntry)
-                .addOnFailureListener(e -> 
-                    Toast.makeText(this, "Failed to save to history", Toast.LENGTH_SHORT).show());
+        // Save each field separately with bookId as prefix
+        editor.putString(bookId + "_title", getIntent().getStringExtra("txtTitle"));
+        editor.putString(bookId + "_author", getIntent().getStringExtra("author"));
+        editor.putString(bookId + "_desc", getIntent().getStringExtra("desc"));
+        editor.putString(bookId + "_category", getIntent().getStringExtra("category"));
+        editor.putString(bookId + "_pdfLink", getIntent().getStringExtra("pdfLink"));
+        editor.putString(bookId + "_downloadUrl", getIntent().getStringExtra("downloadUrl"));
+        editor.putString(bookId + "_thumbnailUrl", getIntent().getStringExtra("thumbnailUrl"));
+        editor.putLong(bookId + "_timestamp", System.currentTimeMillis());
+
+        // Maintain order of history items
+        String historyOrder = historyPrefs.getString("history_order", "");
+        List<String> historyIds = new ArrayList<>();
+        if (!historyOrder.isEmpty()) {
+            historyIds = new ArrayList<>(Arrays.asList(historyOrder.split(",")));
+        }
+        
+        // Remove if exists and add to front
+        historyIds.remove(bookId);
+        historyIds.add(0, bookId);
+
+        // Limit history size
+        if (historyIds.size() > 50) {
+            String removedId = historyIds.remove(historyIds.size() - 1);
+            // Clean up old entry
+            editor.remove(removedId + "_title");
+            editor.remove(removedId + "_author");
+            editor.remove(removedId + "_desc");
+            editor.remove(removedId + "_category");
+            editor.remove(removedId + "_pdfLink");
+            editor.remove(removedId + "_downloadUrl");
+            editor.remove(removedId + "_thumbnailUrl");
+            editor.remove(removedId + "_timestamp");
+        }
+
+        // Save updated order
+        editor.putString("history_order", TextUtils.join(",", historyIds));
+        editor.apply();
     }
 }
