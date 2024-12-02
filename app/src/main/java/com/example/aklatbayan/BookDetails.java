@@ -101,6 +101,7 @@ public class BookDetails extends AppCompatActivity {
                 Intent intent = new Intent(BookDetails.this, BookPdf.class);
                 intent.putExtra("pdfLink", pdfLink);
                 intent.putExtra("id", getIntent().getStringExtra("id"));
+                intent.putExtra("title", getIntent().getStringExtra("txtTitle"));
                 startActivity(intent);
             }
         });

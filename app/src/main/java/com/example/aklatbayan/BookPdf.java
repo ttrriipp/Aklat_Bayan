@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,25 +36,31 @@ public class BookPdf extends AppCompatActivity {
     private int currentPage = 0;
     private SharedPreferences sharedPreferences;
     private static final String READING_PROGRESS_PREF = "ReadingProgress";
-    Button btnBack;
+    private TextView txtBookTitle;
+    private TextView txtPageNumber;
+    ImageButton btnBack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBookPdfBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Initialize views
         btnBack = findViewById(R.id.btnBack);
+        txtBookTitle = findViewById(R.id.txtBookTitle);
+        txtPageNumber = findViewById(R.id.txtPageNumber);
+
         firestore = FirebaseFirestore.getInstance();
         sharedPreferences = getSharedPreferences(READING_PROGRESS_PREF, MODE_PRIVATE);
         
         String pdfLink = getIntent().getStringExtra("pdfLink");
         bookId = getIntent().getStringExtra("id");
+        String bookTitle = getIntent().getStringExtra("title");
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        // Set book title
+        txtBookTitle.setText(bookTitle != null ? bookTitle : "Book Reader");
+
+        btnBack.setOnClickListener(v -> onBackPressed());
 
         if (bookId != null) {
             loadReadingProgress();
@@ -121,18 +129,19 @@ public class BookPdf extends AppCompatActivity {
                 .onPageChange((page, pageCount) -> {
                     currentPage = page;
                     totalPages = pageCount;
+                    updatePageNumber();
                     saveReadingProgress();
                 })
                 .onLoad(nbPages -> {
                     totalPages = nbPages;
-                    binding.progressBar.setVisibility(View.GONE);
-                })
-                .onError(throwable -> {
-                    Toast.makeText(this, "Error loading PDF: " + throwable.getMessage(), 
-                        Toast.LENGTH_SHORT).show();
+                    updatePageNumber();
                     binding.progressBar.setVisibility(View.GONE);
                 })
                 .load();
+    }
+
+    private void updatePageNumber() {
+        txtPageNumber.setText(String.format("%d/%d", currentPage + 1, totalPages));
     }
 
     private void loadOnlinePdf(String pdfLink) {
