@@ -163,14 +163,8 @@ public class AccountSettingsFragment extends Fragment {
             SharedPreferences favorites = requireContext().getSharedPreferences("Favorites", Context.MODE_PRIVATE);
             favorites.edit().clear().apply();
 
-            // Clear reading progress from Firestore
-            FirebaseFirestore.getInstance().collection("reading_progress")
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (DocumentSnapshot document : queryDocumentSnapshots) {
-                            document.getReference().delete();
-                        }
-                    });
+            SharedPreferences readingProgress = requireContext().getSharedPreferences("ReadingProgress", Context.MODE_PRIVATE);
+            readingProgress.edit().clear().apply();
 
         } catch (Exception e) {
             e.printStackTrace();
