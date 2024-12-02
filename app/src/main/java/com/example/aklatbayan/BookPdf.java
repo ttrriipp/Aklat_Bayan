@@ -107,14 +107,28 @@ public class BookPdf extends AppCompatActivity {
                 })
                 .onLoad(nbPages -> {
                     totalPages = nbPages;
+                    currentPage = 0;
                     updatePageNumber();
+                    binding.progressBar.setVisibility(View.GONE);
+                })
+                .onError(throwable -> {
+                    Toast.makeText(BookPdf.this, 
+                        "Error loading PDF: " + throwable.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
                     binding.progressBar.setVisibility(View.GONE);
                 })
                 .load();
     }
 
     private void updatePageNumber() {
-        txtPageNumber.setText(String.format("%d/%d", currentPage + 1, totalPages));
+        if (totalPages > 0) {
+            runOnUiThread(() -> {
+                txtPageNumber.setText(String.format("%d/%d", currentPage + 1, totalPages));
+                txtPageNumber.setVisibility(View.VISIBLE);
+            });
+        } else {
+            txtPageNumber.setVisibility(View.GONE);
+        }
     }
 
     private void loadOnlinePdf(String pdfLink) {
@@ -154,10 +168,13 @@ public class BookPdf extends AppCompatActivity {
                             .onPageChange((page, pageCount) -> {
                                 currentPage = page;
                                 totalPages = pageCount;
+                                updatePageNumber();
                                 saveReadingProgress();
                             })
                             .onLoad(nbPages -> {
                                 totalPages = nbPages;
+                                currentPage = 0;
+                                updatePageNumber();
                                 binding.progressBar.setVisibility(View.GONE);
                             })
                             .onError(throwable -> {
