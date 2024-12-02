@@ -59,11 +59,13 @@ public class BookDetails extends AppCompatActivity {
         String thumbnail = getIntent().getStringExtra("thumbnailUrl");
 
         String title = getIntent().getStringExtra("txtTitle");
+        String author = getIntent().getStringExtra("author");
         Glide.with(this).load(thumbnail).into(binding.detailThumbnail);
 
         binding.txtTitle.setText(title);
-        binding.txtCategory.setText(category);
+        binding.txtCategory.setText("Category: " + category);
         binding.txtDescription.setText(description);
+        binding.txtAuthor.setText("By " + author);
 
         btnRead = findViewById(R.id.btnRead);
         btnBack = findViewById(R.id.btnBack);
