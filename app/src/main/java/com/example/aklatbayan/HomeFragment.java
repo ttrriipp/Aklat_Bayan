@@ -53,29 +53,38 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        firestore = FirebaseFirestore.getInstance();
-        titleList = new ArrayList<>();
-        adapter = new Adapter(requireContext(), titleList, false);
-        binding.rcv.setAdapter(adapter);
-        binding.rcv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        try {
+            firestore = FirebaseFirestore.getInstance();
+            titleList = new ArrayList<>();
+            adapter = new Adapter(requireContext(), titleList, false);
+            binding.rcv.setAdapter(adapter);
+            binding.rcv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        categoryTabLayout = binding.categoryTabLayout;
-        setupCategoryTabs();
-        loadBooks("All Categories");
+            categoryTabLayout = binding.categoryTabLayout;
+            setupCategoryTabs();
+            loadBooks("All Categories");
 
-        // Setup search functionality
-        binding.txtSearchBar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            // Setup search functionality
+            binding.txtSearchBar.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                filterList(s.toString());
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (s != null) {
+                        filterList(s.toString());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            if (isAdded()) {
+                Toast.makeText(requireContext(), "Error initializing: " + e.getMessage(), 
+                    Toast.LENGTH_SHORT).show();
             }
-        });
+        }
     }
 
     private void setupCategoryTabs() {
@@ -99,50 +108,78 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadBooks(String selectedCategory) {
+        if (!isAdded() || getContext() == null) return;
+
         titleList.clear();
+        binding.rcv.setVisibility(View.VISIBLE);
+        binding.data.setVisibility(View.GONE);
         
         Query query;
-        if (selectedCategory.equals("All Categories")) {
+        if (selectedCategory == null || selectedCategory.equals("All Categories")) {
             query = firestore.collection("Books");
         } else {
-            query = firestore.collection("Books").whereEqualTo("category", selectedCategory);
+            query = firestore.collection("Books")
+                    .whereEqualTo("category", selectedCategory);
         }
 
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            if (!queryDocumentSnapshots.isEmpty()) {
+            if (!isAdded()) return;
+
+            if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                titleList.clear();
                 for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                    Model model = document.toObject(Model.class);
-                    if (model != null) {
-                        model.setId(document.getId());
-                        titleList.add(model);
+                    try {
+                        Model model = document.toObject(Model.class);
+                        if (model != null) {
+                            model.setId(document.getId());
+                            titleList.add(model);
+                        }
+                    } catch (Exception e) {
+                        if (isAdded()) {
+                            Toast.makeText(requireContext(), "Error loading book: " + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
                 adapter.notifyDataSetChanged();
+            }
+            updateEmptyView();
+        }).addOnFailureListener(e -> {
+            if (isAdded()) {
+                Toast.makeText(requireContext(), "Error loading books: " + e.getMessage(), 
+                    Toast.LENGTH_SHORT).show();
                 updateEmptyView();
             }
         });
     }
 
     private void filterList(String text) {
+        if (text == null || titleList == null) return;
+
         ArrayList<Model> filteredList = new ArrayList<>();
         for (Model item : titleList) {
-            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+            if (item != null && item.getTitle() != null && 
+                item.getTitle().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
 
-        if (filteredList.isEmpty()) {
-            binding.data.setVisibility(View.VISIBLE);
-            binding.rcv.setVisibility(View.GONE);
-        } else {
-            adapter.setFilteredList(filteredList);
-            binding.data.setVisibility(View.GONE);
-            binding.rcv.setVisibility(View.VISIBLE);
+        if (isAdded()) {
+            if (filteredList.isEmpty()) {
+                binding.data.setVisibility(View.VISIBLE);
+                binding.rcv.setVisibility(View.GONE);
+            } else {
+                adapter.setFilteredList(filteredList);
+                binding.data.setVisibility(View.GONE);
+                binding.rcv.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     private void updateEmptyView() {
-        if (titleList.isEmpty()) {
+        if (!isAdded()) return;
+
+        if (titleList == null || titleList.isEmpty()) {
             binding.data.setVisibility(View.VISIBLE);
             binding.rcv.setVisibility(View.GONE);
         } else {
