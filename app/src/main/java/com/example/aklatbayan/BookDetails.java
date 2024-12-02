@@ -28,10 +28,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.HashMap;
 
 public class BookDetails extends AppCompatActivity {
     ImageButton btnBack, btnDownload;
@@ -178,7 +174,7 @@ public class BookDetails extends AppCompatActivity {
         }
 
         dialog = new Dialog(this, R.style.Dialog_style);
-        dialog.setContentView(R.layout.activity_downloads);
+        dialog.setContentView(R.layout.activity_download_dialog);
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
         
         btnCancel = dialog.findViewById(R.id.btnCancel);

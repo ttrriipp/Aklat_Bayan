@@ -18,7 +18,7 @@
         android:theme="@style/Theme.AklatBayan"
         tools:targetApi="31">
         <activity
-            android:name=".popup_logout"
+            android:name=".LogoutPopup"
             android:exported="false" />
         <activity
             android:name=".BookPdf"

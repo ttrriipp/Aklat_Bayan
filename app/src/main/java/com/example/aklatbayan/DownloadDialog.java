@@ -1,13 +1,11 @@
 package com.example.aklatbayan;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,7 +23,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Downloads extends AppCompatActivity {
+public class DownloadDialog extends AppCompatActivity {
     private String bookId;
     private String downloadUrl;
     private String title;
@@ -43,7 +41,7 @@ public class Downloads extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_downloads);
+        setContentView(R.layout.activity_download_dialog);
 
         firestore = FirebaseFirestore.getInstance();
         
@@ -65,7 +63,7 @@ public class Downloads extends AppCompatActivity {
             if (!isDownloading && !isBookDownloaded(bookId)) {
                 downloadBook();
             } else if (isBookDownloaded(bookId)) {
-                Toast.makeText(Downloads.this, "Book already downloaded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DownloadDialog.this, "Book already downloaded", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -93,9 +91,9 @@ public class Downloads extends AppCompatActivity {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(() -> {
                     if (call.isCanceled()) {
-                        Toast.makeText(Downloads.this, "Download cancelled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DownloadDialog.this, "Download cancelled", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(Downloads.this, "Download failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DownloadDialog.this, "Download failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                     isDownloading = false;
                     downloadProgress.setVisibility(View.GONE);
@@ -107,7 +105,7 @@ public class Downloads extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     runOnUiThread(() -> {
-                        Toast.makeText(Downloads.this, "Download failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DownloadDialog.this, "Download failed", Toast.LENGTH_SHORT).show();
                         isDownloading = false;
                         downloadProgress.setVisibility(View.GONE);
                         btnDownloadFull.setEnabled(true);
@@ -141,7 +139,7 @@ public class Downloads extends AppCompatActivity {
                 saveDownloadedBook(downloadedBook);
 
                 runOnUiThread(() -> {
-                    Toast.makeText(Downloads.this, "Download completed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DownloadDialog.this, "Download completed", Toast.LENGTH_SHORT).show();
                     isDownloading = false;
                     downloadProgress.setVisibility(View.GONE);
                     finish();

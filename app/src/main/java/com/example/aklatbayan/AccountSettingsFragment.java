@@ -33,7 +33,7 @@ public class AccountSettingsFragment extends Fragment {
         btnLogout.setOnClickListener(v -> {
             // Show logout popup dialog
             Dialog logoutDialog = new Dialog(getActivity(), R.style.Dialog_style);
-            logoutDialog.setContentView(R.layout.activity_popup_logout);
+            logoutDialog.setContentView(R.layout.activity_logout_popup);
             logoutDialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
             
             // Set the dialog width to 80% of screen width
