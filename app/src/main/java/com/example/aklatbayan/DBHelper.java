@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String dbname = "AklatBayanDB";
-    private static final int dbversion = 1;
+    private static final int dbversion = 2;
 
     public final static String tblname = "USERS";
     public final static String columnID = "ID";
@@ -33,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + tblname);
         onCreate(db);
     }

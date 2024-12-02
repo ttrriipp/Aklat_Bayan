@@ -15,6 +15,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
+
 public class LoginPage extends AppCompatActivity {
     EditText etEmail, etPassword;
     Button btnLogin;
@@ -64,14 +66,26 @@ public class LoginPage extends AppCompatActivity {
                 } else {
                     Boolean checkCredentials = dbHelper.checkUser(EMAIL, PASSWORD);
                     if (checkCredentials) {
-                        // Save login session
-                        String username = dbHelper.getUsername(EMAIL);
-                        sessionManager.setLogin(true, username, EMAIL);
-                        
-                        Toast.makeText(LoginPage.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), MainScreen.class);
-                        startActivity(intent);
-                        finish();
+                        try {
+                            // Create necessary directories
+                            File booksDir = new File(getFilesDir(), "books");
+                            if (!booksDir.exists()) {
+                                booksDir.mkdirs();
+                            }
+
+                            // Save login session
+                            String username = dbHelper.getUsername(EMAIL);
+                            sessionManager.setLogin(true, username, EMAIL);
+                            
+                            Toast.makeText(LoginPage.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainScreen.class);
+                            startActivity(intent);
+                            finish();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(LoginPage.this, "Error during login: " + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(LoginPage.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                     }

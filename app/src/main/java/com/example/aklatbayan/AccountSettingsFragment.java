@@ -1,7 +1,9 @@
 package com.example.aklatbayan;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -14,6 +16,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.io.File;
 
 public class AccountSettingsFragment extends Fragment {
     private TextView txtUsername, txtEmail, txtPassword;
@@ -51,8 +56,7 @@ public class AccountSettingsFragment extends Fragment {
         
         // Existing logout button logic
         btnLogout.setOnClickListener(v -> {
-            // Show logout popup dialog
-            Dialog logoutDialog = new Dialog(getActivity(), R.style.Dialog_style);
+            Dialog logoutDialog = new Dialog(requireContext(), R.style.Dialog_style);
             logoutDialog.setContentView(R.layout.activity_logout_popup);
             logoutDialog.getWindow().setBackgroundDrawableResource(R.drawable.blue_popup);
             
@@ -66,6 +70,8 @@ public class AccountSettingsFragment extends Fragment {
             Button btnCancel = logoutDialog.findViewById(R.id.cncl);
 
             btnLogout.setOnClickListener(v2 -> {
+                // Clear all app data before logout
+                clearAppData();
                 sessionManager.logout();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -137,6 +143,37 @@ public class AccountSettingsFragment extends Fragment {
                     Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+    }
+
+    private void clearAppData() {
+        try {
+            // Clear downloaded books
+            File booksDir = new File(requireContext().getFilesDir(), "books");
+            if (booksDir.exists()) {
+                for (File file : booksDir.listFiles()) {
+                    file.delete();
+                }
+            }
+
+            // Clear SharedPreferences
+            SharedPreferences downloadedBooks = requireContext().getSharedPreferences("downloaded_books", Context.MODE_PRIVATE);
+            downloadedBooks.edit().clear().apply();
+
+            SharedPreferences favorites = requireContext().getSharedPreferences("Favorites", Context.MODE_PRIVATE);
+            favorites.edit().clear().apply();
+
+            // Clear reading progress from Firestore
+            FirebaseFirestore.getInstance().collection("reading_progress")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot document : queryDocumentSnapshots) {
+                            document.getReference().delete();
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 } 
