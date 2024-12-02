@@ -1,8 +1,10 @@
 package com.example.aklatbayan;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,18 +34,26 @@ public class BookPdf extends AppCompatActivity {
     private int currentPage = 0;
     private SharedPreferences sharedPreferences;
     private static final String READING_PROGRESS_PREF = "ReadingProgress";
-    
+    Button btnBack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBookPdfBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        btnBack = findViewById(R.id.btnBack);
         firestore = FirebaseFirestore.getInstance();
         sharedPreferences = getSharedPreferences(READING_PROGRESS_PREF, MODE_PRIVATE);
         
         String pdfLink = getIntent().getStringExtra("pdfLink");
         bookId = getIntent().getStringExtra("id");
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BookPdf.this, BookDetails.class);
+                startActivity(intent);
+            }
+        });
 
         if (bookId != null) {
             loadReadingProgress();
