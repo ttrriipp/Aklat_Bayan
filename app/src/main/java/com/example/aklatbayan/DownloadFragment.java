@@ -24,17 +24,20 @@ public class DownloadFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar loadingIndicator;
     private TextView emptyView;
+    private TextView headerText;
     private Adapter adapter;
     private ArrayList<Model> downloadedBooks;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_download, container, false);
+        view = inflater.inflate(R.layout.fragment_download, container, false);
         
         recyclerView = view.findViewById(R.id.rcv);
         loadingIndicator = view.findViewById(R.id.loadingIndicator);
         emptyView = view.findViewById(R.id.emptyView);
+        headerText = view.findViewById(R.id.textView15);
         
         downloadedBooks = new ArrayList<>();
         adapter = new Adapter(requireContext(), downloadedBooks, true);
@@ -55,6 +58,7 @@ public class DownloadFragment extends Fragment {
             loadingIndicator.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
+            headerText.setVisibility(View.GONE);
             return;
         }
 
@@ -78,10 +82,12 @@ public class DownloadFragment extends Fragment {
         if (downloadedBooks.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
+            headerText.setVisibility(View.GONE);
         } else {
             recyclerView.setVisibility(View.VISIBLE);
-            adapter.notifyDataSetChanged();
             emptyView.setVisibility(View.GONE);
+            headerText.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
         }
     }
 

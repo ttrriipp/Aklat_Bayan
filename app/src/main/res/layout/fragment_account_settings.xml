@@ -11,7 +11,7 @@
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/playfair_display_sc"
         android:text="Username"
@@ -25,78 +25,78 @@
         android:id="@+id/userNamebar"
         android:layout_width="280dp"
         android:layout_height="38dp"
+        android:layout_marginStart="16dp"
         android:background="@drawable/viewtext"
-        android:textColor="#8e8e8e"
-        android:textSize="20sp"
         android:gravity="center_vertical"
         android:paddingStart="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/btnEditUsername"
-        app:layout_constraintStart_toStartOf="@+id/textView10"
+        android:textColor="#8e8e8e"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <ImageButton
         android:id="@+id/btnEditUsername"
         android:layout_width="40dp"
         android:layout_height="38dp"
-        android:layout_marginEnd="80dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/baseline_edit_24"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/userNamebar"
         app:layout_constraintTop_toTopOf="@+id/userNamebar" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/playfair_display_sc"
         android:text="Email"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/userNamebar"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userNamebar" />
 
     <TextView
         android:id="@+id/Emailbar"
         android:layout_width="280dp"
         android:layout_height="37dp"
+        android:layout_marginStart="16dp"
         android:background="@drawable/viewtext"
-        android:textColor="#8e8e8e"
-        android:textSize="20sp"
         android:gravity="center_vertical"
         android:paddingStart="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/btnEditEmail"
-        app:layout_constraintStart_toStartOf="@+id/textView11"
+        android:textColor="#8e8e8e"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
     <ImageButton
         android:id="@+id/btnEditEmail"
         android:layout_width="40dp"
         android:layout_height="38dp"
-        android:layout_marginEnd="80dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/baseline_edit_24"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Emailbar"
         app:layout_constraintTop_toTopOf="@+id/Emailbar" />
 
     <TextView
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/playfair_display_sc"
         android:text="Password"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/Emailbar"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Emailbar" />
 
     <FrameLayout
         android:layout_width="330dp"
         android:layout_height="33dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Emailbar">
@@ -106,11 +106,11 @@
             android:layout_width="280dp"
             android:layout_height="match_parent"
             android:background="@drawable/viewtext"
-            android:textColor="#8e8e8e"
-            android:textSize="20sp"
             android:gravity="center_vertical"
             android:paddingStart="10dp"
-            android:text="••••••••" />
+            android:text="••••••••"
+            android:textColor="#8e8e8e"
+            android:textSize="20sp" />
 
         <ImageButton
             android:id="@+id/btnEditPassword"
