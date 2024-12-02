@@ -3,11 +3,13 @@ package com.example.aklatbayan;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -19,6 +21,7 @@ public class SignUpPage extends AppCompatActivity {
     Button btnSignup;
     ImageButton btnBack;
     DBHelper dbHelper;
+    ToggleButton tglPass, tglPass2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,8 @@ public class SignUpPage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        tglPass = findViewById(R.id.tglPass);
+        tglPass2 = findViewById(R.id.tglPass2);
 
         etUsername = findViewById(R.id.txtUsername);
         etEmail2 = findViewById(R.id.txtEmail2);
@@ -42,6 +47,25 @@ public class SignUpPage extends AppCompatActivity {
 
         btnSignup.setOnClickListener(v -> saveUser());
         btnBack.setOnClickListener(v -> finish());
+
+        tglPass.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                etPassword.setTransformationMethod(null);
+            }
+            else {
+                etPassword.setTransformationMethod(new PasswordTransformationMethod());
+            }
+        });
+        etPassword.setSelection(etPassword.getText().length());
+        tglPass2.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                etReTypePassword.setTransformationMethod(null);
+            }
+            else {
+                etReTypePassword.setTransformationMethod(new PasswordTransformationMethod());
+            }
+        });
+        etReTypePassword.setSelection(etReTypePassword.getText().length());
     }
 
     private void saveUser() {

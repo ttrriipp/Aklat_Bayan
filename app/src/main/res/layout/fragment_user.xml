@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/profileImage"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="139dp"
+        android:layout_height="141dp"
         android:layout_marginTop="32dp"
         android:background="@drawable/circle_background"
         android:padding="8dp"
@@ -18,6 +18,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/imgPick"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:paddingEnd="10dp"
+        android:drawableTint="@color/white"
+        android:drawableEnd="@drawable/baseline_camera_alt_24"
+        android:background="@drawable/circle_background"
+        app:layout_constraintBottom_toBottomOf="@+id/profileImage"
+        app:layout_constraintEnd_toEndOf="@+id/profileImage" />
 
     <TextView
         android:id="@+id/userNamebar"
