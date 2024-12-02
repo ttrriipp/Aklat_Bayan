@@ -23,15 +23,26 @@
 
     <TextView
         android:id="@+id/userNamebar"
-        android:layout_width="326dp"
+        android:layout_width="280dp"
         android:layout_height="38dp"
-        android:layout_marginEnd="80dp"
         android:background="@drawable/viewtext"
         android:textColor="#8e8e8e"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/btnEditUsername"
         app:layout_constraintStart_toStartOf="@+id/textView10"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <ImageButton
+        android:id="@+id/btnEditUsername"
+        android:layout_width="40dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="80dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_edit_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/userNamebar" />
 
     <TextView
         android:id="@+id/textView11"
@@ -48,16 +59,26 @@
 
     <TextView
         android:id="@+id/Emailbar"
-        android:layout_width="323dp"
+        android:layout_width="280dp"
         android:layout_height="37dp"
-        android:layout_marginEnd="80dp"
         android:background="@drawable/viewtext"
         android:textColor="#8e8e8e"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/btnEditEmail"
         app:layout_constraintStart_toStartOf="@+id/textView11"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <ImageButton
+        android:id="@+id/btnEditEmail"
+        android:layout_width="40dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="80dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_edit_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/Emailbar" />
 
     <TextView
         android:id="@+id/textView12"
@@ -80,23 +101,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Emailbar">
 
-        <ToggleButton
-            android:id="@+id/toggleButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/passwordtoggle"
-            android:textOff=""
-            android:textOn="" />
-
         <TextView
             android:id="@+id/Passbar"
-            android:layout_width="326dp"
+            android:layout_width="280dp"
             android:layout_height="match_parent"
             android:background="@drawable/viewtext"
             android:textColor="#8e8e8e"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:text="••••••••" />
+
+        <ImageButton
+            android:id="@+id/btnEditPassword"
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_edit_24" />
 
     </FrameLayout>
 
