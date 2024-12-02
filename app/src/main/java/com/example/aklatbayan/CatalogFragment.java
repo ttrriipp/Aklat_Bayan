@@ -64,7 +64,7 @@ public class CatalogFragment extends Fragment {
             return;
         }
 
-        List<String> favoriteIds = Arrays.asList(favoriteBooks.split(","));
+        List<String> favoriteIds = new ArrayList<>(Arrays.asList(favoriteBooks.split(",")));
 
         firestore.collection("Books")
                 .get()
@@ -72,8 +72,10 @@ public class CatalogFragment extends Fragment {
                     if (task.isSuccessful() && isAdded()) {
                         favoriteList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Model book = document.toObject(Model.class);
-                            if (favoriteIds.contains(book.getId())) {
+                            String bookId = document.getId();
+                            if (favoriteIds.contains(bookId)) {
+                                Model book = document.toObject(Model.class);
+                                book.setId(bookId);
                                 favoriteList.add(book);
                             }
                         }

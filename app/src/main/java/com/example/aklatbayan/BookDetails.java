@@ -139,21 +139,25 @@ public class BookDetails extends AppCompatActivity {
                 
                 if (btnFave.isChecked()) {
                     // Add to favorites
-                    if (!currentFavorites.isEmpty()) {
-                        currentFavorites += "," + bookId;
-                    } else {
+                    if (currentFavorites.isEmpty()) {
                         currentFavorites = bookId;
+                    } else if (!currentFavorites.contains(bookId)) {  // Check if book is not already in favorites
+                        currentFavorites += "," + bookId;
                     }
                     Toast.makeText(BookDetails.this, "Added to favorites", Toast.LENGTH_SHORT).show();
                 } else {
                     // Remove from favorites
-                    if (currentFavorites.contains("," + bookId)) {
-                        currentFavorites = currentFavorites.replace("," + bookId, "");
-                    } else if (currentFavorites.contains(bookId + ",")) {
-                        currentFavorites = currentFavorites.replace(bookId + ",", "");
-                    } else {
-                        currentFavorites = currentFavorites.replace(bookId, "");
+                    String[] favorites = currentFavorites.split(",");
+                    StringBuilder newFavorites = new StringBuilder();
+                    for (String id : favorites) {
+                        if (!id.equals(bookId)) {
+                            if (newFavorites.length() > 0) {
+                                newFavorites.append(",");
+                            }
+                            newFavorites.append(id);
+                        }
                     }
+                    currentFavorites = newFavorites.toString();
                     Toast.makeText(BookDetails.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
                 }
 
