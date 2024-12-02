@@ -50,8 +50,7 @@ public class BookPdf extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BookPdf.this, BookDetails.class);
-                startActivity(intent);
+                onBackPressed();
             }
         });
 
