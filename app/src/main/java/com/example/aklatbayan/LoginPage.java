@@ -21,6 +21,7 @@ public class LoginPage extends AppCompatActivity {
     ImageButton btnBack;
     private DBHelper dbHelper;
     ToggleButton passwordVisibilityToggle;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class LoginPage extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
 
         dbHelper = new DBHelper(this);
+        sessionManager = new SessionManager(this);
 
         passwordVisibilityToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
@@ -58,20 +60,22 @@ public class LoginPage extends AppCompatActivity {
                 String PASSWORD = etPassword.getText().toString();
 
                 if (EMAIL.isEmpty() || PASSWORD.isEmpty()) {
-                    Toast.makeText(LoginPage.this, "Please enter your email and password.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginPage.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
                 } else {
-                    boolean isUserValid = dbHelper.checkUser(EMAIL, PASSWORD);
-
-                    if (isUserValid) {
-                        Intent myIt = new Intent(LoginPage.this, MainScreen.class);
-                        startActivity(myIt);
+                    Boolean checkCredentials = dbHelper.checkUser(EMAIL, PASSWORD);
+                    if (checkCredentials) {
+                        // Save login session
+                        String username = dbHelper.getUsername(EMAIL);
+                        sessionManager.setLogin(true, username, EMAIL);
+                        
+                        Toast.makeText(LoginPage.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainScreen.class);
+                        startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(LoginPage.this, "Invalid email or password.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginPage.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                     }
                 }
-
-
             }
         });
 

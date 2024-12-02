@@ -17,6 +17,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import android.text.format.DateUtils;
 
 public class HistoryFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -42,7 +44,6 @@ public class HistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         
         firestore = FirebaseFirestore.getInstance();
-        
         loadHistory();
         
         return view;
@@ -61,10 +62,22 @@ public class HistoryFragment extends Fragment {
                         historyList.clear();
                         
                         ArrayList<String> processedIds = new ArrayList<>();
+                        String currentLabel = null;
                         
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Model book = document.toObject(Model.class);
                             if (book.getId() != null && !processedIds.contains(book.getId())) {
+                                String timeLabel = getTimeLabel(book.getTimestamp());
+                                
+                                // Add header if it's a new time period
+                                if (!timeLabel.equals(currentLabel)) {
+                                    Model header = new Model();
+                                    header.setTitle(timeLabel);
+                                    header.setId("header_" + book.getTimestamp());
+                                    historyList.add(header);
+                                    currentLabel = timeLabel;
+                                }
+                                
                                 historyList.add(book);
                                 processedIds.add(book.getId());
                             }
@@ -75,7 +88,6 @@ public class HistoryFragment extends Fragment {
                         if (historyList.isEmpty()) {
                             recyclerView.setVisibility(View.GONE);
                             emptyView.setVisibility(View.VISIBLE);
-                            emptyView.setText("No reading history yet");
                         } else {
                             recyclerView.setVisibility(View.VISIBLE);
                             emptyView.setVisibility(View.GONE);
@@ -91,6 +103,70 @@ public class HistoryFragment extends Fragment {
                         Toast.makeText(requireContext(), "Error loading history", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private String getTimeLabel(long timestamp) {
+        if (DateUtils.isToday(timestamp)) {
+            return "Today";
+        } else if (isYesterday(timestamp)) {
+            return "Yesterday";
+        } else if (isThisWeek(timestamp)) {
+            return "This Week";
+        } else if (isLastWeek(timestamp)) {
+            return "Last Week";
+        } else if (isThisMonth(timestamp)) {
+            return "This Month";
+        } else {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(timestamp);
+            return android.text.format.DateFormat.format("MMMM yyyy", cal).toString();
+        }
+    }
+
+    private boolean isYesterday(long timestamp) {
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_YEAR, -1);
+        yesterday.set(Calendar.HOUR_OF_DAY, 0);
+        yesterday.set(Calendar.MINUTE, 0);
+        yesterday.set(Calendar.SECOND, 0);
+        yesterday.set(Calendar.MILLISECOND, 0);
+        
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(timestamp);
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        
+        return yesterday.getTimeInMillis() == date.getTimeInMillis();
+    }
+
+    private boolean isThisWeek(long timestamp) {
+        Calendar now = Calendar.getInstance();
+        Calendar timeToCheck = Calendar.getInstance();
+        timeToCheck.setTimeInMillis(timestamp);
+        
+        return now.get(Calendar.YEAR) == timeToCheck.get(Calendar.YEAR) 
+            && now.get(Calendar.WEEK_OF_YEAR) == timeToCheck.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    private boolean isLastWeek(long timestamp) {
+        Calendar now = Calendar.getInstance();
+        Calendar timeToCheck = Calendar.getInstance();
+        timeToCheck.setTimeInMillis(timestamp);
+        
+        now.add(Calendar.WEEK_OF_YEAR, -1);
+        return now.get(Calendar.YEAR) == timeToCheck.get(Calendar.YEAR) 
+            && now.get(Calendar.WEEK_OF_YEAR) == timeToCheck.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    private boolean isThisMonth(long timestamp) {
+        Calendar now = Calendar.getInstance();
+        Calendar timeToCheck = Calendar.getInstance();
+        timeToCheck.setTimeInMillis(timestamp);
+        
+        return now.get(Calendar.YEAR) == timeToCheck.get(Calendar.YEAR) 
+            && now.get(Calendar.MONTH) == timeToCheck.get(Calendar.MONTH);
     }
 
     @Override

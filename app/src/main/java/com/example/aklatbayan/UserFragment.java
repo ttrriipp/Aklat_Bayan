@@ -6,23 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-
-import java.util.Objects;
 
 public class UserFragment extends Fragment {
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
     private ImageView profileImg;
     private Button imgPick;
+    private TextView userNameText;
+    private SessionManager sessionManager;
     private final String[] tabTitles = new String[]{"Favorites", "History", "Settings"};
 
     @Override
@@ -30,14 +30,20 @@ public class UserFragment extends Fragment {
                            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user, container, false);
 
+        // Initialize SessionManager
+        sessionManager = new SessionManager(requireContext());
+
         viewPager = view.findViewById(R.id.viewPager);
         tabLayout = view.findViewById(R.id.tabLayout);
+        profileImg = view.findViewById(R.id.profileImage);
+        imgPick = view.findViewById(R.id.imgPick);
+        userNameText = view.findViewById(R.id.userNamebar);
+
+        // Set the username from SessionManager
+        userNameText.setText(sessionManager.getUsername());
 
         setupViewPager();
         setupTabLayout();
-
-        profileImg = view.findViewById(R.id.profileImage);
-        imgPick = view.findViewById(R.id.imgPick);
 
         return view;
     }

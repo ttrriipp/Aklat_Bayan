@@ -1,65 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="280dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:layout_gravity="center"
+    android:minWidth="280dp"
+    android:maxWidth="320dp">
 
     <TextView
         android:id="@+id/textView8"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:fontFamily="@font/alegreya_sc"
-        android:text="Download the E-Book"
+        android:fontFamily="@font/bebas_neue"
+        android:text="Download E-Book"
+        android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
 
     <TextView
         android:id="@+id/downloadMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
         android:text="This will download the full book for offline reading"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_marginBottom="24dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginTop="8dp">
 
         <Button
             android:id="@+id/btnDownloadFull"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#4CAF50"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/greenbgbtn"
             android:drawableStart="@drawable/baseline_download_24"
             android:drawablePadding="8dp"
-            android:padding="12dp"
+            android:fontFamily="@font/comfortaa_bold"
+            android:gravity="center"
             android:text="Download"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="#FF5722"
-            android:padding="12dp"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="@drawable/blueborder"
             android:text="Cancel"
-            android:textColor="@color/white" />
+            android:textColor="#445ACE"
+            android:layout_marginStart="6dp"
+            android:fontFamily="@font/comfortaa_bold"
+            android:textSize="14sp"/>
 
     </LinearLayout>
 
