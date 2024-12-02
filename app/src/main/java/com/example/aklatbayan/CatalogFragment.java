@@ -38,7 +38,7 @@ public class CatalogFragment extends Fragment {
         emptyView = view.findViewById(R.id.emptyView);
         
         favoriteList = new ArrayList<>();
-        adapter = new Adapter(requireContext(), favoriteList, false);
+        adapter = new Adapter(requireContext(), favoriteList, true);
         
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));

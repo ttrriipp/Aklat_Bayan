@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment {
         try {
             firestore = FirebaseFirestore.getInstance();
             titleList = new ArrayList<>();
-            adapter = new Adapter(requireContext(), titleList, false);
+            adapter = new Adapter(requireContext(), titleList, true);
             binding.rcv.setAdapter(adapter);
             binding.rcv.setLayoutManager(new LinearLayoutManager(requireContext()));
 

@@ -342,19 +342,16 @@ public class BookDetails extends AppCompatActivity {
     }
 
     private void loadReadingProgress(String bookId) {
-        firestore.collection("reading_progress")
-                .document(bookId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        double progress = documentSnapshot.getDouble("progress");
-                        bookReadingProgress.setProgress((int) progress);
-                        bookReadingProgress.setVisibility(View.VISIBLE);
-                    } else {
-                        bookReadingProgress.setVisibility(View.GONE);
-                    }
-                })
-                .addOnFailureListener(e -> bookReadingProgress.setVisibility(View.GONE));
+        // Replace Firestore code with SharedPreferences
+        SharedPreferences readingProgress = getSharedPreferences("ReadingProgress", Context.MODE_PRIVATE);
+        float progress = readingProgress.getFloat(bookId + "_progress", 0f);
+        
+        if (progress > 0) {
+            bookReadingProgress.setProgress((int) progress);
+            bookReadingProgress.setVisibility(View.VISIBLE);
+        } else {
+            bookReadingProgress.setVisibility(View.GONE);
+        }
     }
 
     @Override

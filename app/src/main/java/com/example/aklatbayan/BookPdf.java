@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -91,33 +92,43 @@ public class BookPdf extends AppCompatActivity {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(bookId + "_page", currentPage);
             editor.putInt(bookId + "_total", totalPages);
-            editor.putFloat(bookId + "_progress", (float) currentPage / totalPages * 100);
+            float progressPercentage = ((float) currentPage / totalPages) * 100;
+            editor.putFloat(bookId + "_progress", progressPercentage);
             editor.apply();
         }
     }
 
     private void loadOfflinePdf(File pdfFile) {
-        binding.pdfView.fromFile(pdfFile)
-                .defaultPage(currentPage)
-                .onPageChange((page, pageCount) -> {
-                    currentPage = page;
-                    totalPages = pageCount;
-                    updatePageNumber();
-                    saveReadingProgress();
-                })
-                .onLoad(nbPages -> {
-                    totalPages = nbPages;
-                    currentPage = 0;
-                    updatePageNumber();
-                    binding.progressBar.setVisibility(View.GONE);
-                })
-                .onError(throwable -> {
-                    Toast.makeText(BookPdf.this, 
-                        "Error loading PDF: " + throwable.getMessage(), 
-                        Toast.LENGTH_SHORT).show();
-                    binding.progressBar.setVisibility(View.GONE);
-                })
-                .load();
+        try {
+            binding.pdfView.fromFile(pdfFile)
+                    .enableSwipe(true)
+                    .swipeHorizontal(false)
+                    .enableDoubletap(true)
+                    .defaultPage(currentPage)
+                    .onPageChange((page, pageCount) -> {
+                        currentPage = page;
+                        totalPages = pageCount;
+                        updatePageNumber();
+                        saveReadingProgress();
+                    })
+                    .onLoad(nbPages -> {
+                        totalPages = nbPages;
+                        currentPage = 0;
+                        updatePageNumber();
+                        binding.progressBar.setVisibility(View.GONE);
+                    })
+                    .onError(throwable -> {
+                        Toast.makeText(BookPdf.this, 
+                            "Error loading PDF: " + throwable.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                        binding.progressBar.setVisibility(View.GONE);
+                    })
+                    .load();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error loading PDF file", Toast.LENGTH_SHORT).show();
+            binding.progressBar.setVisibility(View.GONE);
+            finish();
+        }
     }
 
     private void updatePageNumber() {
@@ -133,65 +144,96 @@ public class BookPdf extends AppCompatActivity {
 
     private void loadOnlinePdf(String pdfLink) {
         binding.progressBar.setVisibility(View.VISIBLE);
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(pdfLink).build();
+        try {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(BookPdf.this, 
-                        "Error loading PDF: " + e.getMessage(), 
-                        Toast.LENGTH_SHORT).show();
-                    binding.progressBar.setVisibility(View.GONE);
-                    finish();
-                });
-            }
+            Request request = new Request.Builder()
+                    .url(pdfLink)
+                    .build();
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(() -> {
                         Toast.makeText(BookPdf.this, 
-                            "Error: Could not load PDF", 
+                            "Error loading PDF: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show();
                         binding.progressBar.setVisibility(View.GONE);
                         finish();
                     });
-                    return;
                 }
 
-                InputStream inputStream = response.body().byteStream();
-                runOnUiThread(() -> {
-                    binding.pdfView.fromStream(inputStream)
-                            .defaultPage(currentPage)
-                            .onPageChange((page, pageCount) -> {
-                                currentPage = page;
-                                totalPages = pageCount;
-                                updatePageNumber();
-                                saveReadingProgress();
-                            })
-                            .onLoad(nbPages -> {
-                                totalPages = nbPages;
-                                currentPage = 0;
-                                updatePageNumber();
-                                binding.progressBar.setVisibility(View.GONE);
-                            })
-                            .onError(throwable -> {
-                                Toast.makeText(BookPdf.this, 
-                                    "Error loading PDF: " + throwable.getMessage(), 
-                                    Toast.LENGTH_SHORT).show();
-                                binding.progressBar.setVisibility(View.GONE);
-                            })
-                            .load();
-                });
-            }
-        });
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(BookPdf.this, 
+                                "Error: Could not load PDF", 
+                                Toast.LENGTH_SHORT).show();
+                            binding.progressBar.setVisibility(View.GONE);
+                            finish();
+                        });
+                        return;
+                    }
+
+                    try {
+                        InputStream inputStream = response.body().byteStream();
+                        runOnUiThread(() -> {
+                            binding.pdfView.fromStream(inputStream)
+                                    .enableSwipe(true)
+                                    .swipeHorizontal(false)
+                                    .enableDoubletap(true)
+                                    .defaultPage(currentPage)
+                                    .onPageChange((page, pageCount) -> {
+                                        currentPage = page;
+                                        totalPages = pageCount;
+                                        updatePageNumber();
+                                        saveReadingProgress();
+                                    })
+                                    .onLoad(nbPages -> {
+                                        totalPages = nbPages;
+                                        currentPage = 0;
+                                        updatePageNumber();
+                                        binding.progressBar.setVisibility(View.GONE);
+                                    })
+                                    .onError(throwable -> {
+                                        Toast.makeText(BookPdf.this, 
+                                            "Error loading PDF: " + throwable.getMessage(), 
+                                            Toast.LENGTH_SHORT).show();
+                                        binding.progressBar.setVisibility(View.GONE);
+                                    })
+                                    .load();
+                        });
+                    } catch (Exception e) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(BookPdf.this, 
+                                "Error processing PDF", 
+                                Toast.LENGTH_SHORT).show();
+                            binding.progressBar.setVisibility(View.GONE);
+                            finish();
+                        });
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, "Error setting up PDF download", Toast.LENGTH_SHORT).show();
+            binding.progressBar.setVisibility(View.GONE);
+            finish();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        saveReadingProgress();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         saveReadingProgress();
     }
 }
