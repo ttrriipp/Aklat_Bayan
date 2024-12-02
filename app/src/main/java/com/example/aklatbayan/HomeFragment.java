@@ -12,15 +12,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aklatbayan.Recycler.Adapter;
 import com.example.aklatbayan.Recycler.Model;
 import com.example.aklatbayan.databinding.FragmentHomeBinding;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
@@ -29,10 +33,18 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore firestore;
     private ArrayList<Model> titleList;
     private Adapter adapter;
+    private TabLayout categoryTabLayout;
+    private static final String[] CATEGORIES = {
+        "All Categories", 
+        "Alamat", 
+        "Panitikang Pambata", 
+        "Kwentong Bayan", 
+        "Epiko", 
+        "Maikling Kwento"
+    };
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -47,20 +59,66 @@ public class HomeFragment extends Fragment {
         binding.rcv.setAdapter(adapter);
         binding.rcv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        loadData();
+        categoryTabLayout = binding.categoryTabLayout;
+        setupCategoryTabs();
+        loadBooks("All Categories");
 
+        // Setup search functionality
         binding.txtSearchBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
                 filterList(s.toString());
+            }
+        });
+    }
+
+    private void setupCategoryTabs() {
+        for (String category : CATEGORIES) {
+            categoryTabLayout.addTab(categoryTabLayout.newTab().setText(category));
+        }
+
+        categoryTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                loadBooks(tab.getText().toString());
+                binding.txtSearchBar.setText(""); // Clear search when changing categories
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
+    private void loadBooks(String selectedCategory) {
+        titleList.clear();
+        
+        Query query;
+        if (selectedCategory.equals("All Categories")) {
+            query = firestore.collection("Books");
+        } else {
+            query = firestore.collection("Books").whereEqualTo("category", selectedCategory);
+        }
+
+        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()) {
+                for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                    Model model = document.toObject(Model.class);
+                    if (model != null) {
+                        model.setId(document.getId());
+                        titleList.add(model);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                updateEmptyView();
             }
         });
     }
@@ -83,22 +141,14 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void loadData() {
-        titleList.clear();
-        firestore.collection("Books").orderBy("id", Query.Direction.ASCENDING)
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) {
-                        Toast.makeText(requireContext(), "Error loading data", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    for (DocumentChange dc : Objects.requireNonNull(value).getDocumentChanges()) {
-                        if (dc.getType() == DocumentChange.Type.ADDED) {
-                            titleList.add(dc.getDocument().toObject(Model.class));
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+    private void updateEmptyView() {
+        if (titleList.isEmpty()) {
+            binding.data.setVisibility(View.VISIBLE);
+            binding.rcv.setVisibility(View.GONE);
+        } else {
+            binding.data.setVisibility(View.GONE);
+            binding.rcv.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
