@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class LoginPage extends AppCompatActivity {
     private DBHelper dbHelper;
     ToggleButton passwordVisibilityToggle;
     private SessionManager sessionManager;
+    private CheckBox keepSignedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,14 @@ public class LoginPage extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
         sessionManager = new SessionManager(this);
+
+        keepSignedIn = findViewById(R.id.checkBox);
+        
+        // Check if user credentials are saved
+        if (sessionManager.keepSignedIn()) {
+            etEmail.setText(sessionManager.getEmail());
+            // Don't pre-fill password for security
+        }
 
         passwordVisibilityToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
@@ -73,9 +83,9 @@ public class LoginPage extends AppCompatActivity {
                                 booksDir.mkdirs();
                             }
 
-                            // Save login session
+                            // Save login session with keep signed in preference
                             String username = dbHelper.getUsername(EMAIL);
-                            sessionManager.setLogin(true, username, EMAIL);
+                            sessionManager.setLogin(true, username, EMAIL, keepSignedIn.isChecked());
                             
                             Toast.makeText(LoginPage.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), MainScreen.class);
