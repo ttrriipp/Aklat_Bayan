@@ -23,6 +23,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -102,22 +103,47 @@ public class UserFragment extends Fragment {
                 directory.mkdirs();
             }
 
-            // Create file
+            // Delete all existing profile images in the directory
+            if (directory.exists() && directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        file.delete();
+                    }
+                }
+            }
+
+            // Create new file
             String fileName = sessionManager.getUsername() + "_profile.jpg";
             File file = new File(directory, fileName);
 
-            // Save bitmap to file
+            // Save new bitmap to file
             FileOutputStream fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
             fos.close();
+
+            // Clear any existing image from Glide's cache
+            Glide.get(requireContext()).clearMemory();
+            // Clear disk cache in background
+            new Thread(() -> {
+                Glide.get(requireContext()).clearDiskCache();
+            }).start();
 
             // Save file path to SharedPreferences
             sharedPreferences.edit()
                     .putString(PROFILE_IMAGE_PREF, file.getAbsolutePath())
                     .apply();
 
-            // Load the saved image
-            loadProfileImage();
+            // Load the saved image with animation and skip cache
+            Glide.with(this)
+                    .load(file)
+                    .skipMemoryCache(true)
+                    .circleCrop()
+                    .placeholder(R.drawable.user_svgrepo_com)
+                    .error(R.drawable.user_svgrepo_com)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(profileImg);
+
             Toast.makeText(requireContext(), "Profile image updated", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
@@ -133,10 +159,16 @@ public class UserFragment extends Fragment {
             if (imageFile.exists()) {
                 Glide.with(this)
                         .load(imageFile)
+                        .skipMemoryCache(true)
                         .circleCrop()
                         .placeholder(R.drawable.user_svgrepo_com)
                         .error(R.drawable.user_svgrepo_com)
+                        .transition(DrawableTransitionOptions.withCrossFade())
                         .into(profileImg);
+            } else {
+                // If file doesn't exist, clear the preference and set default image
+                sharedPreferences.edit().remove(PROFILE_IMAGE_PREF).apply();
+                profileImg.setImageResource(R.drawable.user_svgrepo_com);
             }
         } else {
             // Set default image if no profile image is saved
