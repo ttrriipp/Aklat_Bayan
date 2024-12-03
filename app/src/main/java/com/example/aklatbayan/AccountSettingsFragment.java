@@ -122,18 +122,19 @@ public class AccountSettingsFragment extends Fragment {
         String currentEmail = sessionManager.getEmail();
         String currentUsername = sessionManager.getUsername();
         String currentPassword = ""; // You'll need to get this from the database
+        boolean keepSignedIn = sessionManager.keepSignedIn(); // Get current keep signed in state
 
         switch (field) {
             case "Username":
                 if (dbHelper.updateUser(newValue, currentEmail, currentPassword)) {
-                    sessionManager.setLogin(true, newValue, currentEmail);
+                    sessionManager.setLogin(true, newValue, currentEmail, keepSignedIn);
                     txtUsername.setText(newValue);
                     Toast.makeText(requireContext(), "Username updated successfully", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case "Email":
                 if (dbHelper.updateUser(currentUsername, newValue, currentPassword)) {
-                    sessionManager.setLogin(true, currentUsername, newValue);
+                    sessionManager.setLogin(true, currentUsername, newValue, keepSignedIn);
                     txtEmail.setText(newValue);
                     Toast.makeText(requireContext(), "Email updated successfully", Toast.LENGTH_SHORT).show();
                 }
